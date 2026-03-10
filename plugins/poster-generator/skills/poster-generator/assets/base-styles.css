@@ -1,0 +1,203 @@
+/* ============================================================
+   Base Poster Styles
+
+   Canvas sizes by aspect ratio:
+     9:16  → 1080 x 1920  (vertical / story / phone)
+     4:5   → 1080 x 1350  (Instagram portrait)
+     1:1   → 1080 x 1080  (square)
+     16:9  → 1920 x 1080  (landscape / widescreen)
+
+   Claude MUST customize colors, fonts, and theme per poster.
+   ============================================================ */
+
+/* === Poster Foundation === */
+.poster {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-size: 32px;
+    line-height: 1.4;
+    color: #1a1a1a;
+    background: #ffffff;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* === Layout Helpers === */
+.poster-padded-sm { padding: 60px; }
+.poster-padded    { padding: 80px; }
+.poster-padded-lg { padding: 120px; }
+
+.poster-centered {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.poster-top    { justify-content: flex-start; }
+.poster-bottom { justify-content: flex-end; }
+
+.poster-spread {
+    justify-content: space-between;
+}
+
+/* === Typography === */
+.poster h1 {
+    font-size: 96px;
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.04em;
+}
+
+.poster h2 {
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+.poster h3 {
+    font-size: 44px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.poster p {
+    font-size: 28px;
+    line-height: 1.5;
+}
+
+.poster .headline {
+    font-size: 120px;
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.05em;
+}
+
+.poster .subhead {
+    font-size: 36px;
+    font-weight: 300;
+    opacity: 0.75;
+    line-height: 1.3;
+}
+
+.poster .overline {
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    font-weight: 700;
+}
+
+.poster .caption {
+    font-size: 20px;
+    opacity: 0.5;
+    line-height: 1.4;
+}
+
+.poster .big-number {
+    font-size: 200px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.05em;
+}
+
+.poster .label {
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 700;
+}
+
+/* === Common Elements === */
+.poster ul, .poster ol {
+    font-size: 28px;
+    padding-left: 1.4em;
+    line-height: 1.6;
+}
+.poster li {
+    margin-bottom: 10px;
+}
+
+.poster blockquote {
+    font-size: 44px;
+    font-style: italic;
+    line-height: 1.35;
+    border-left: 6px solid var(--accent, #3b82f6);
+    padding-left: 36px;
+}
+
+.poster code {
+    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+    font-size: 0.85em;
+    background: rgba(0,0,0,0.06);
+    padding: 3px 10px;
+    border-radius: 5px;
+}
+
+/* === Utility === */
+.flex-row { display: flex; flex-direction: row; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-1 { flex: 1; }
+.gap-sm { gap: 16px; }
+.gap-md { gap: 32px; }
+.gap-lg { gap: 64px; }
+.gap-xl { gap: 96px; }
+.items-center { align-items: center; }
+.items-end { align-items: flex-end; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.overflow-hidden { overflow: hidden; }
+
+.accent-line {
+    width: 80px; height: 6px;
+    border-radius: 3px;
+    background: var(--accent, #3b82f6);
+}
+
+.badge {
+    display: inline-block;
+    padding: 8px 24px;
+    border-radius: 24px;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.divider-line {
+    width: 100%; height: 1px;
+    background: rgba(0,0,0,0.1);
+}
+
+/* === Image Helpers === */
+.poster img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+.poster .img-cover {
+    width: 100%; height: 100%;
+    object-fit: cover;
+}
+.poster .img-contain {
+    width: 100%; height: 100%;
+    object-fit: contain;
+}
+
+/* === Overlay for image backgrounds === */
+.poster .overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+.poster .overlay + * {
+    position: relative;
+    z-index: 2;
+}

@@ -1,0 +1,44 @@
+{
+  "name": "creai-it-skills",
+  "owner": {
+    "name": "CREAI-IT"
+  },
+  "plugins": [
+    {
+      "name": "poster-generator",
+      "source": "./plugins/poster-generator",
+      "description": "Create posters, flyers, banners, social media graphics as HTML files",
+      "version": "1.0.0"
+    },
+    {
+      "name": "powerpoint-deck-generator",
+      "source": "./plugins/powerpoint-deck-generator",
+      "description": "Create presentation decks and slides as HTML files",
+      "version": "1.0.0"
+    },
+    {
+      "name": "remotion-video-creator",
+      "source": "./plugins/remotion-video-creator",
+      "description": "Create motion graphics and animated video content with React and Remotion",
+      "version": "1.0.0"
+    },
+    {
+      "name": "research-consulting",
+      "source": "./plugins/research-consulting",
+      "description": "MBB-style research and strategic synthesis for decision-grade deliverables",
+      "version": "1.0.0"
+    },
+    {
+      "name": "quant-algorithm-creator",
+      "source": "./plugins/quant-algorithm-creator",
+      "description": "Create and optimize crypto mean reversion trading algorithms",
+      "version": "1.0.0"
+    },
+    {
+      "name": "seo-geo-optimizer",
+      "source": "./plugins/seo-geo-optimizer",
+      "description": "Audit and optimize for SEO and AI search engines (GEO)",
+      "version": "1.0.0"
+    }
+  ]
+}

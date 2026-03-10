@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{SLIDE_TITLE}} — {{DECK_TITLE}}</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            width: 100%; height: 100vh;
+            background: #0a0a0a;
+            overflow: hidden;
+            position: relative;
+        }
+        .slide {
+            width: 1920px; height: 1080px;
+            transform-origin: 0 0;
+            position: absolute;
+            top: 50%; left: 50%;
+            overflow: hidden;
+            border-radius: 4px;
+            box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+        }
+    </style>
+    <link rel="stylesheet" href="styles.css">
+    <!-- {{SLIDE_SPECIFIC_STYLES}} -->
+    <script>
+        function scaleSlide() {
+            const slide = document.querySelector('.slide');
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            const scale = Math.min(vw / 1920, vh / 1080) * 0.92;
+            const scaledW = 1920 * scale;
+            const scaledH = 1080 * scale;
+            slide.style.transform = `translate(${-scaledW / 2}px, ${-scaledH / 2}px) scale(${scale})`;
+        }
+        window.addEventListener('resize', scaleSlide);
+        window.addEventListener('load', scaleSlide);
+    </script>
+</head>
+<body>
+    <div class="slide">
+        <!-- {{SLIDE_CONTENT}} -->
+    </div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+{
+  "marketplace": {
+    "name": "CREAI-IT/creai-it-skills",
+    "owner": "CREAI-IT",
+    "version": "1.0.0"
+  },
+  "skills": [
+    {
+      "name": "poster-generator",
+      "category": "Content & Visual",
+      "description": "Create posters, flyers, banners, social media graphics as HTML files",
+      "tags": ["html", "design", "poster", "flyer", "social-media"],
+      "version": "1.0.0",
+      "install_command": "/plugin install poster-generator@creai-it-skills"
+    },
+    {
+      "name": "powerpoint-deck-generator",
+      "category": "Content & Visual",
+      "description": "Create presentation decks and slides as HTML files",
+      "tags": ["html", "presentation", "slides", "deck", "powerpoint"],
+      "version": "1.0.0",
+      "install_command": "/plugin install powerpoint-deck-generator@creai-it-skills"
+    },
+    {
+      "name": "remotion-video-creator",
+      "category": "Content & Visual",
+      "description": "Create motion graphics and animated video content with React and Remotion",
+      "tags": ["react", "video", "motion-graphics", "remotion", "animation"],
+      "version": "1.0.0",
+      "install_command": "/plugin install remotion-video-creator@creai-it-skills"
+    },
+    {
+      "name": "research-consulting",
+      "category": "Strategy",
+      "description": "MBB-style research and strategic synthesis for decision-grade deliverables",
+      "tags": ["research", "consulting", "strategy", "market-analysis", "business"],
+      "version": "1.0.0",
+      "install_command": "/plugin install research-consulting@creai-it-skills"
+    },
+    {
+      "name": "quant-algorithm-creator",
+      "category": "Strategy",
+      "description": "Create and optimize crypto mean reversion trading algorithms",
+      "tags": ["crypto", "trading", "algorithm", "quant", "backtesting"],
+      "version": "1.0.0",
+      "install_command": "/plugin install quant-algorithm-creator@creai-it-skills"
+    },
+    {
+      "name": "seo-geo-optimizer",
+      "category": "Development",
+      "description": "Audit and optimize for SEO and AI search engines (GEO)",
+      "tags": ["seo", "geo", "search", "optimization", "nextjs"],
+      "version": "1.0.0",
+      "install_command": "/plugin install seo-geo-optimizer@creai-it-skills"
+    }
+  ]
+}

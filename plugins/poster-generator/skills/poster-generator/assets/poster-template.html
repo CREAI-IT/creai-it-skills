@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{POSTER_TITLE}}</title>
+    <!-- PDF Export Libraries (bundled locally — no CDN dependency) -->
+    <script src="lib/html2canvas.min.js"></script>
+    <script src="lib/jspdf.umd.min.js"></script>
+    <style>
+        /* === Viewer Chrome === */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            width: 100%; height: 100%;
+            overflow: hidden;
+            background: #0a0a0a;
+            font-family: system-ui, -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .viewer {
+            width: 100vw; height: 100vh;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* === Poster Canvas === */
+        .poster-container {
+            width: {{CANVAS_WIDTH}}px; height: {{CANVAS_HEIGHT}}px;
+            transform-origin: 0 0;
+            position: absolute;
+            top: 50%; left: 50%;
+            overflow: hidden;
+            border-radius: 4px;
+            box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+        }
+
+        .poster {
+            width: {{CANVAS_WIDTH}}px; height: {{CANVAS_HEIGHT}}px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* === Controls === */
+        .controls {
+            position: fixed; bottom: 24px; left: 50%;
+            transform: translateX(-50%);
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 8px 20px;
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.08);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .viewer:hover .controls,
+        .controls:focus-within { opacity: 1; }
+
+        .controls button {
+            background: none; border: none;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer; font-size: 16px;
+            padding: 6px 10px; border-radius: 6px;
+            transition: all 0.2s ease;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .controls button:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+        }
+        .controls button.exporting {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .controls .label {
+            color: rgba(255,255,255,0.4);
+            font-size: 12px;
+            letter-spacing: 0.05em;
+        }
+
+        .divider {
+            width: 1px; height: 20px;
+            background: rgba(255,255,255,0.12);
+        }
+
+        /* === Keyboard Hints === */
+        .hints {
+            position: fixed; bottom: 80px; left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.4);
+            font-size: 12px;
+            text-align: center;
+            z-index: 999;
+            opacity: 1;
+            transition: opacity 1s ease;
+        }
+        .hints.hidden { opacity: 0; pointer-events: none; }
+        .hints kbd {
+            display: inline-block;
+            padding: 2px 6px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 3px;
+            font-family: inherit;
+            font-size: 11px;
+            margin: 0 2px;
+        }
+
+        /* === Export Overlay === */
+        .export-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            z-index: 10000;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .export-overlay.active {
+            opacity: 1; pointer-events: auto;
+        }
+        .export-spinner {
+            width: 36px; height: 36px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--accent, #3b82f6);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .export-status {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+    </style>
+    <!-- {{POSTER_STYLES}} -->
+</head>
+<body>
+    <div class="viewer">
+        <div class="poster-container" id="posterContainer">
+            <div class="poster">
+                <!-- {{POSTER_CONTENT}} -->
+            </div>
+        </div>
+
+        <div class="controls">
+            <span class="label">{{CANVAS_WIDTH}} &times; {{CANVAS_HEIGHT}}</span>
+            <span class="divider"></span>
+            <button onclick="toggleFullscreen()" aria-label="Fullscreen" title="Fullscreen (F)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+            </button>
+            <button id="pdfBtn" onclick="exportPDF()" aria-label="Export PDF" title="Export PDF (P)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+            </button>
+        </div>
+
+        <div class="hints" id="hints">
+            <kbd>F</kbd> fullscreen
+            &nbsp;&middot;&nbsp;
+            <kbd>P</kbd> export PDF
+        </div>
+    </div>
+
+    <!-- Export Overlay -->
+    <div class="export-overlay" id="exportOverlay">
+        <div class="export-spinner"></div>
+        <div class="export-status" id="exportStatus">Exporting poster...</div>
+    </div>
+
+    <script>
+        /* === Canvas Dimensions === */
+        const CANVAS_W = {{CANVAS_WIDTH}};
+        const CANVAS_H = {{CANVAS_HEIGHT}};
+        let isExporting = false;
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        /* === PDF Export (html2canvas + jsPDF) === */
+        async function exportPDF() {
+            if (isExporting) return;
+            isExporting = true;
+
+            const overlay = document.getElementById('exportOverlay');
+            const status = document.getElementById('exportStatus');
+            const pdfBtn = document.getElementById('pdfBtn');
+
+            overlay.classList.add('active');
+            pdfBtn.classList.add('exporting');
+
+            const container = document.getElementById('posterContainer');
+            const savedContainerCSS = container.style.cssText;
+
+            try {
+                // Pre-flight check
+                if (typeof html2canvas === 'undefined' || !window.jspdf) {
+                    throw new Error('PDF libraries failed to load. Ensure lib/ folder exists alongside this HTML file.');
+                }
+
+                await document.fonts.ready;
+                status.textContent = 'Rendering poster...';
+
+                const { jsPDF } = window.jspdf;
+                const orientation = CANVAS_W >= CANVAS_H ? 'landscape' : 'portrait';
+                const pdf = new jsPDF({
+                    orientation: orientation,
+                    unit: 'px',
+                    format: [CANVAS_W, CANVAS_H],
+                    hotfixes: ['px_scaling']
+                });
+
+                // Position container at origin for clean capture
+                container.style.cssText =
+                    `width:${CANVAS_W}px;height:${CANVAS_H}px;position:fixed;top:0;left:0;` +
+                    'transform:none;overflow:hidden;z-index:9999;border-radius:0;box-shadow:none;';
+
+                await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+                await new Promise(r => setTimeout(r, 100));
+
+                const canvas = await html2canvas(container, {
+                    width: CANVAS_W,
+                    height: CANVAS_H,
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false,
+                    imageTimeout: 15000
+                });
+
+                status.textContent = 'Saving PDF...';
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, CANVAS_W, CANVAS_H);
+
+                const filename = document.title
+                    .replace(/[^a-zA-Z0-9\-_\s]/g, '')
+                    .trim()
+                    .replace(/\s+/g, '-')
+                    .toLowerCase() || 'poster';
+                pdf.save(`${filename}.pdf`);
+
+            } catch (err) {
+                console.error('PDF export failed:', err);
+                overlay.classList.remove('active');
+                alert('PDF export failed: ' + err.message);
+            } finally {
+                container.style.cssText = savedContainerCSS;
+                scalePoster();
+                pdfBtn.classList.remove('exporting');
+                overlay.classList.remove('active');
+                isExporting = false;
+            }
+        }
+
+        /* === Keyboard Controls === */
+        document.addEventListener('keydown', (e) => {
+            if (isExporting) return;
+            switch(e.key) {
+                case 'f': case 'F':
+                    if (!e.metaKey && !e.ctrlKey) toggleFullscreen(); break;
+                case 'p': case 'P':
+                    if (!e.metaKey && !e.ctrlKey) { e.preventDefault(); exportPDF(); } break;
+                case 'Escape':
+                    if (document.fullscreenElement) document.exitFullscreen(); break;
+            }
+        });
+
+        /* === Responsive Scaling === */
+        function scalePoster() {
+            const container = document.getElementById('posterContainer');
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            const scale = Math.min(vw / CANVAS_W, vh / CANVAS_H) * 0.88;
+            const scaledW = CANVAS_W * scale;
+            const scaledH = CANVAS_H * scale;
+            container.style.transform = `translate(${-scaledW / 2}px, ${-scaledH / 2}px) scale(${scale})`;
+        }
+
+        window.addEventListener('resize', scalePoster);
+        scalePoster();
+
+        /* Auto-hide hints */
+        setTimeout(() => {
+            document.getElementById('hints').classList.add('hidden');
+        }, 3000);
+    </script>
+</body>
+</html>
