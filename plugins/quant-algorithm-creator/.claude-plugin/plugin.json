@@ -1,5 +1,7 @@
 {
   "name": "quant-algorithm-creator",
   "description": "Create and optimize crypto mean reversion trading algorithms",
-  "version": "1.0.0"
+  "author": {
+    "name": "CREAI-IT"
+  }
 }
