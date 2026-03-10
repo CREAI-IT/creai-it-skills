@@ -289,21 +289,21 @@ Every slide has a **complete-sentence action title** at the top that states the 
 
 **The viewer test**: Imagine someone viewing this slide on a projector at 3 meters, or on a laptop in a meeting room. Every text element must be immediately readable without squinting or leaning in. If you have to ask "is this big enough?" — it isn't.
 
-**Hard floor: nothing below 14px.** The only exception is source citations at the very bottom of a slide. Everything the viewer is meant to actually read must be 18px or above.
+**Hard floor: nothing below 14px.** The only exception is source citations at the very bottom of a slide. Everything the viewer is meant to actually read must be 22px or above.
 
-Sizes are **mandatory ranges** — never go below minimums:
+Sizes are **mandatory ranges** — never go below minimums. **Always start at the UPPER end of the range, not the lower end.** Users consistently find default sizes too small — err on the side of too large.
 
 | Tier | Element | Size | Weight | Notes |
 |------|---------|------|--------|-------|
-| **T1** | Action title | 36–44px | 600–700 | Same size on every slide. Left-aligned. |
-| **T2** | Subheading | 24–28px | 400–500 | One line. Context or qualifying statement. |
-| **T3** | Body text, descriptions, card content | 20–26px | 400 | Line-height 1.4–1.6. The default for anything the viewer reads. |
-| **T3** | Item titles within cards/lists | 20–24px | 600–700 | Bold sub-items. Never smaller than body text. |
+| **T1** | Action title | 38–44px | 600–700 | Same size on every slide. Left-aligned. |
+| **T2** | Subheading / body description below title | 24–28px | 400–500 | Context paragraph. Start at 24px. |
+| **T3** | Card content, descriptions, list items | 22–28px | 400 | Line-height 1.4–1.6. **Start at 24px** — this is the default for anything the viewer reads. |
+| **T3** | Item titles within cards/lists | 24–28px | 600–700 | Bold sub-items. Never smaller than body text. |
 | **Hero** | Key metric / hero number | 64–120px | 700–900 | Accent color. Max 1–2 per slide. |
 | **T4** | Category labels, overlines, badges | 14–18px | 600–700 | Uppercase + letter-spacing 0.12–0.2em. |
 | **T5** | Source citations, footnotes | 12–14px | 400 | Bottom of slide only. The ONLY text allowed below 14px. |
 
-**The critical rule**: If content is meant to be read (descriptions, explanations, card text, list items), it is **T3 = 20px minimum**. Do not invent a smaller tier. If it doesn't fit at 20px, you have too much content — cut words or split the slide.
+**The critical rule**: If content is meant to be read (descriptions, explanations, card text, list items), it is **T3 = 24px default, 22px absolute minimum**. Do not invent a smaller tier. If it doesn't fit at 22px, you have too much content — cut words or split the slide. **Never set body/card/description text to 16-20px — this is consistently too small for 1920×1080 slides.**
 
 **Additional rules:**
 - Maximum **2 font families** across the entire deck
@@ -326,8 +326,8 @@ Empty slides are the #1 quality failure. A slide with a title, one stat, and whi
 | # | Element | Spec |
 |---|---------|------|
 | 1 | **Overline** | Section label, uppercase, T4 (14-18px) |
-| 2 | **Action title** | Complete-sentence headline, T1 (36-44px) |
-| 3 | **Body text** | 1-2 sentences of narrative context, T3 (20-24px) |
+| 2 | **Action title** | Complete-sentence headline, T1 (38-44px) |
+| 3 | **Body text** | 1-2 sentences of narrative context, T2 (24-28px) |
 | 4 | **Primary content** | Main visual area — cards, grids, columns, hero metrics (4+ data elements) |
 | 5 | **Supporting section** | Bottom element — callout bar, impact row, comparison strip, or key quote |
 
@@ -440,8 +440,8 @@ The viewer's `P` key triggers `window.print()`. This is a quick fallback but **n
 | Topic labels as titles ("Market Analysis") | Write action titles: complete sentences stating a conclusion |
 | **Empty/sparse slides (THE #1 MISTAKE)** | **Every slide must fill 80%+ of the canvas. Add body text under title, 4+ data elements in primary area, and a supporting section (callout bar, comparison row, impact items) at the bottom. If a slide has a title, one stat, and whitespace — it is a draft, not a slide.** |
 | Inconsistent title sizes across slides | Action title font size must be identical on every slide |
-| Font sizes too small or too large | Follow the 5-tier hierarchy. Body content = T3 (20px min). Nothing below 14px except sources. |
-| Card text / descriptions below 20px | All readable text is T3. If it doesn't fit at 20px, cut words or split the slide. |
+| **Font sizes too small (THE #2 MISTAKE)** | **Body/card/description text must START at 24px, never below 22px. Users consistently find 16-20px text too small on 1920×1080 slides. When in doubt, go bigger — 24px is the default, not the ceiling.** |
+| Card text / descriptions below 22px | All readable text is T3 (24px default). If it doesn't fit at 22px, cut words or split the slide. Never use 16-20px for descriptive text. |
 | Body content doesn't support the title | Everything on the slide must prove the action title. Apply "so what" test. |
 | No narrative arc across the deck | Use SCR. Write all titles first. Apply storyline test. |
 | Using default/overused fonts | Pick distinctive Google Fonts that match the tone |

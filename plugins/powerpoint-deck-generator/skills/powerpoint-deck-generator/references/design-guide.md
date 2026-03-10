@@ -205,7 +205,7 @@ Inter, Roboto, DM Sans, Space Grotesk, Poppins, Montserrat, Open Sans, Lato, Nun
 
 **The viewer test**: Imagine the slide projected in a meeting room, or viewed on a laptop at arm's length. Every text element must be instantly readable without effort. If you have to wonder "is this readable?" — it isn't. Go larger.
 
-**Self-check**: After building a slide, mentally read every text element top to bottom. If anything feels like "fine print" — it's too small. Body text (T3, 20px+) should feel comfortable and natural.
+**Self-check**: After building a slide, mentally read every text element top to bottom. If anything feels like "fine print" — it's too small. Body text (T3, 24px default) should feel comfortable and natural. Never set body/card/description text to 16-20px — it's always too small on a 1920×1080 canvas.
 
 **Key principles:**
 - Left-align body text. Center-align only for standalone short headlines.
@@ -365,7 +365,7 @@ background: radial-gradient(ellipse at 30% 50%, rgba(56,189,248,0.08) 0%, transp
 ### Data / Statistic Slide
 - Action title at top (36–44px) stating the insight
 - Hero number: 64–120px in accent color
-- Supporting context in much smaller type (18–24px, muted opacity)
+- Supporting context in smaller type (22–28px, muted opacity)
 - Source/attribution (12–14px, 0.3 opacity, bottom)
 - Use `border-left` accent lines on cards rather than fully colored backgrounds
 
@@ -441,7 +441,7 @@ Before finalizing any deck, verify every item:
 | 3 | Titles alone tell the full story | Reading all titles in sequence = coherent argument? |
 | 4 | "So what" test passes | Every element directly supports the title? |
 | 5 | Body proves title, title summarizes body | Nothing in title missing from body; nothing in body irrelevant to title? |
-| 6 | Font sizes within mandatory ranges | Action title 36–44px, body 20–26px, labels 14–18px, source 12–14px? |
+| 6 | Font sizes within mandatory ranges | Action title 36–44px, body 24–28px (default 24px), labels 14–18px, source 12–14px? |
 | 7 | Action title size identical across all slides | No variation in title size? |
 | 8 | Canvas filled 80%+ with structured content | No large empty zones? Visually full yet cognitively scannable? |
 | 9 | Max 3–4 colors with functional meaning | Color = meaning, not decoration? |
@@ -466,7 +466,7 @@ Before finalizing any deck, verify every item:
 | Exactly 3 cards in a row | Most common AI grid pattern | Use 2, 4, or asymmetric grids |
 | Varying title sizes across slides | Looks inconsistent and unprofessional | All action titles must be identical size |
 | Reducing font size to cram content | Illegible and violates hierarchy | Split into multiple slides |
-| Readable text below 20px | Fails the viewer test — too small for body content | All descriptions, explanations, card text = T3 (20px min) |
-| Inventing extra-small tiers (14px body text) | Creates unreadable fine print disguised as content | Only 5 tiers exist. If it's meant to be read, it's T3 (20px). |
+| Readable text below 22px | Fails the viewer test — too small for body content | All descriptions, explanations, card text = T3 (24px default, 22px absolute min) |
+| Inventing extra-small tiers (16-20px body text) | Creates unreadable fine print disguised as content | Only 5 tiers exist. If it's meant to be read, it's T3 (24px). Never 16-20px for body content. |
 | Missing source citations | No credibility for data claims | Every data point needs Source: at bottom |
 | Body content doesn't match title | Confusing, incoherent | Apply "so what" test to every element |
