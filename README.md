@@ -12,6 +12,7 @@ A Claude Code plugin marketplace with production-grade skills for content creati
 | `research-consulting` | Strategy | MBB-style research and strategic synthesis |
 | `quant-algorithm-creator` | Strategy | Create and optimize crypto mean reversion trading algorithms |
 | `seo-geo-optimizer` | Development | Audit and optimize for SEO and AI search engines (GEO) |
+| `launch-playbook` | Marketing & Growth | GTM maestro for product launches across PH, Twitter/X, LinkedIn, HN, Reddit, email, press, and Korean platforms |
 
 ## Installation
 
@@ -30,6 +31,7 @@ A Claude Code plugin marketplace with production-grade skills for content creati
 /plugin install research-consulting@creai-it-skills
 /plugin install quant-algorithm-creator@creai-it-skills
 /plugin install seo-geo-optimizer@creai-it-skills
+/plugin install launch-playbook@creai-it-skills
 ```
 
 Skills auto-update when new versions are pushed.
@@ -44,6 +46,9 @@ Research-backed strategic analysis and quantitative algorithm development.
 
 ### Development
 SEO and AI search engine optimization for web projects.
+
+### Marketing & Growth
+Launch strategy and go-to-market execution across global and Korean platforms.
 
 ## License
 

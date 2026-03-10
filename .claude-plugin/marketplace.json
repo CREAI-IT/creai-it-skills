@@ -39,6 +39,12 @@
       "source": "./plugins/seo-geo-optimizer",
       "description": "Audit and optimize for SEO and AI search engines (GEO)",
       "version": "1.0.0"
+    },
+    {
+      "name": "launch-playbook",
+      "source": "./plugins/launch-playbook",
+      "description": "GTM maestro for planning and executing product launches across Product Hunt, Twitter/X, LinkedIn, HN, Reddit, email, press, and Korean platforms",
+      "version": "1.0.0"
     }
   ]
 }

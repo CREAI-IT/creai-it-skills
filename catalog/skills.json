@@ -52,6 +52,14 @@
       "tags": ["seo", "geo", "search", "optimization", "nextjs"],
       "version": "1.0.0",
       "install_command": "/plugin install seo-geo-optimizer@creai-it-skills"
+    },
+    {
+      "name": "launch-playbook",
+      "category": "Marketing & Growth",
+      "description": "GTM maestro for planning and executing product launches across Product Hunt, Twitter/X, LinkedIn, HN, Reddit, email, press, and Korean platforms (Naver, Kakao)",
+      "tags": ["launch", "gtm", "marketing", "product-hunt", "growth", "copywriting", "korean"],
+      "version": "1.0.0",
+      "install_command": "/plugin install launch-playbook@creai-it-skills"
     }
   ]
 }
