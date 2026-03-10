@@ -4,8 +4,10 @@
 
 - Meta & Head Tags
 - Structured Data (JSON-LD)
+- E-E-A-T Signals
 - Crawlability & Indexing
 - Performance & Core Web Vitals
+- Internal Linking
 - i18n (Korean + English)
 
 ## Meta & Head Tags
@@ -14,26 +16,27 @@
 
 | Check | What to look for | Fix |
 |-------|-----------------|-----|
-| Title tag | Every page has unique `<title>` 50-60 chars | Add via Next.js `metadata.title` or `<Helmet>` |
-| Meta description | Every page, 150-160 chars, includes target keyword | Add via `metadata.description` |
-| Canonical URL | Every page has `<link rel="canonical">` | Set `metadata.metadataBase` + `alternates.canonical` |
+| Title tag | Every page has unique `<title>` 50-60 chars (KO: 40 chars) | `metadata.title` or `<Helmet>` |
+| Meta description | Every page, 150-160 chars (KO: 70-80 chars), includes target keyword | `metadata.description` |
+| Canonical URL | Every page has `<link rel="canonical">` — self-referencing | `metadata.metadataBase` + `alternates.canonical` |
 | Viewport | `<meta name="viewport" content="width=device-width, initial-scale=1">` | Usually default in Next.js |
-| Favicon | Multiple sizes: 16x16, 32x32, apple-touch-icon 180x180 | Add to `app/favicon.ico` + `metadata.icons` |
+| Favicon | 16x16, 32x32, apple-touch-icon 180x180 | `app/favicon.ico` + `metadata.icons` |
 | Language | `<html lang="en">` or `<html lang="ko">` set correctly | Set in root layout |
 
 ### Warning
 
 | Check | What to look for | Fix |
 |-------|-----------------|-----|
-| OG tags | `og:title`, `og:description`, `og:image` (1200x630), `og:url`, `og:type` | Add via `metadata.openGraph` |
-| Twitter cards | `twitter:card`, `twitter:title`, `twitter:description`, `twitter:image` | Add via `metadata.twitter` |
-| Title template | Consistent format like `%s | Brand Name` | Use `metadata.title.template` in root layout |
+| OG tags | `og:title`, `og:description`, `og:image` (1200x630), `og:url`, `og:type` | `metadata.openGraph` |
+| Twitter cards | `twitter:card`, `twitter:title`, `twitter:description`, `twitter:image` | `metadata.twitter` |
+| Title template | Consistent format like `%s \| Brand Name` | `metadata.title.template` in root layout |
 | Duplicate titles | No two pages share the same title | Audit all page metadata exports |
+| Dynamic OG images | Result/product pages should have dynamic OG images | See `references/dynamic-og-images.md` |
 
-### Next.js Metadata Pattern
+### Next.js App Router Pattern (v14-16)
 
 ```tsx
-// app/layout.tsx - Root layout
+// app/layout.tsx — Root layout
 export const metadata: Metadata = {
   metadataBase: new URL('https://example.com'),
   title: {
@@ -62,10 +65,18 @@ export const metadata: Metadata = {
 };
 ```
 
+**Dynamic metadata (Next.js 16 — params is Promise):**
+
 ```tsx
-// app/[slug]/page.tsx - Dynamic page
-export async function generateMetadata({ params }): Promise<Metadata> {
-  const page = await getPage(params.slug);
+// app/[slug]/page.tsx
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params;  // Must await in Next.js 16
+  const page = await getPage(slug);
+
   return {
     title: page.title,
     description: page.excerpt,
@@ -75,8 +86,12 @@ export async function generateMetadata({ params }): Promise<Metadata> {
       images: [{ url: page.ogImage }],
     },
     alternates: {
-      canonical: `/${params.slug}`,
+      canonical: `/${slug}`,
     },
+    // Conditionally noindex incomplete content
+    ...(page.status !== 'PUBLISHED' && {
+      robots: { index: false, follow: false },
+    }),
   };
 }
 ```
@@ -84,7 +99,6 @@ export async function generateMetadata({ params }): Promise<Metadata> {
 ### React (non-Next.js) Pattern
 
 ```tsx
-// Using react-helmet-async
 import { Helmet } from 'react-helmet-async';
 
 function SEOHead({ title, description, canonical, ogImage }) {
@@ -107,18 +121,22 @@ function SEOHead({ title, description, canonical, ogImage }) {
 
 ### Priority Schema Types
 
-| Type | Use when | Key properties |
-|------|----------|---------------|
-| `Organization` | Homepage / about page | name, url, logo, sameAs, contactPoint |
-| `WebSite` | Homepage | name, url, potentialAction (SearchAction) |
-| `Article` | Blog posts, news | headline, author, datePublished, dateModified, image |
-| `FAQPage` | FAQ sections | mainEntity[].name, mainEntity[].acceptedAnswer |
-| `HowTo` | Tutorials, guides | name, step[].name, step[].text |
-| `Product` | Product pages | name, description, offers, aggregateRating |
-| `BreadcrumbList` | All pages with breadcrumbs | itemListElement[].name, .item |
-| `LocalBusiness` | Local business pages | name, address, telephone, openingHours, geo |
+| Type | Use when | Key properties | GEO Impact |
+|------|----------|---------------|------------|
+| `Organization` | Homepage / about page | name, url, logo, sameAs, contactPoint | High (brand validation) |
+| `WebSite` | Homepage | name, url, potentialAction (SearchAction) | Medium |
+| `Article` | Blog posts, content pages | headline, author, datePublished, dateModified, image | +22-25% citation |
+| `FAQPage` | FAQ sections | mainEntity[].name, mainEntity[].acceptedAnswer | **+28% citation, 3.2x AI Overview** |
+| `HowTo` | Tutorials, guides | name, step[].name, step[].text | +20-24% citation |
+| `Product` | Product pages | name, description, offers, aggregateRating | +18% citation |
+| `BreadcrumbList` | All pages with breadcrumbs | itemListElement[].name, .item | Medium |
+| `Person` | Author pages | name, jobTitle, sameAs, knowsAbout | High (E-E-A-T) |
+| `LocalBusiness` | Local business pages | name, address, telephone, openingHours, geo | High (local) |
+| `SoftwareApplication` | SaaS/app pages | name, operatingSystem, offers, aggregateRating | Medium |
 
-### JSON-LD Component Pattern (Next.js)
+**Deprecated (Jan 2026):** CourseInfo, ClaimReview, EstimatedSalary, LearningVideo, SpecialAnnouncement, VehicleListing, PracticeProblem — keeping markup doesn't hurt, but no rich results.
+
+### XSS-Safe JSON-LD Component (Next.js)
 
 ```tsx
 // components/JsonLd.tsx
@@ -126,91 +144,127 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify(data).replace(/</g, '\\u003c'),
+      }}
     />
   );
 }
+```
 
-// Usage in page
-<JsonLd data={{
+### Type-Safe with schema-dts
+
+```tsx
+import type { Article, WithContext } from 'schema-dts'; // npm install schema-dts
+
+const articleLd: WithContext<Article> = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: post.title,
-  author: { '@type': 'Person', name: post.author },
+  author: {
+    '@type': 'Person',
+    name: post.author.name,
+    url: `https://example.com/authors/${post.author.slug}`,
+    sameAs: [post.author.linkedIn, post.author.twitter].filter(Boolean),
+  },
   datePublished: post.publishedAt,
-  dateModified: post.updatedAt,
+  dateModified: post.updatedAt,  // CRITICAL for freshness signals
   image: post.coverImage,
   publisher: {
     '@type': 'Organization',
     name: 'Brand Name',
     logo: { '@type': 'ImageObject', url: 'https://example.com/logo.png' },
   },
-}} />
+};
 ```
 
-### FAQPage Schema (Critical for GEO)
+### Multi-Schema on Homepage
 
-```json
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "What is [topic]?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "A clear, self-contained answer with data..."
-      }
-    }
-  ]
-}
+```tsx
+// app/layout.tsx — Organization + WebSite on root
+<JsonLd data={{
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Brand Name',
+  url: 'https://example.com',
+  logo: 'https://example.com/logo.png',
+  sameAs: ['https://twitter.com/brand', 'https://linkedin.com/company/brand'],
+}} />
+<JsonLd data={{
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Brand Name',
+  url: 'https://example.com',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: 'https://example.com/search?q={search_term_string}',
+    'query-input': 'required name=search_term_string',
+  },
+}} />
 ```
 
 ### Validation
 
-- Test with Google Rich Results Test: https://search.google.com/test/rich-results
-- Validate JSON-LD syntax: https://validator.schema.org/
-- Check for required properties per type at schema.org
+- [Google Rich Results Test](https://search.google.com/test/rich-results)
+- [Schema.org Validator](https://validator.schema.org/)
 
-## Crawlability & Indexing
+## E-E-A-T Signals (Experience, Expertise, Authoritativeness, Trustworthiness)
 
-### robots.txt (Next.js)
+Not a direct ranking factor but heavily weighted by Google's quality raters and AI engines. December 2025 Core Update significantly increased its weight.
 
-```ts
-// app/robots.ts
-import type { MetadataRoute } from 'next';
+### Technical Implementation Checklist
 
-export default function robots(): MetadataRoute.Robots {
-  return {
-    rules: [
-      {
-        userAgent: '*',
-        allow: '/',
-        disallow: ['/api/', '/admin/', '/_next/'],
-      },
-      // AI search crawlers - ALLOW explicitly
-      { userAgent: 'GPTBot', allow: '/' },
-      { userAgent: 'ChatGPT-User', allow: '/' },
-      { userAgent: 'OAI-SearchBot', allow: '/' },
-      { userAgent: 'PerplexityBot', allow: '/' },
-      { userAgent: 'ClaudeBot', allow: '/' },
-      { userAgent: 'Googlebot', allow: '/' },
-      { userAgent: 'Bingbot', allow: '/' },
-    ],
-    sitemap: 'https://example.com/sitemap.xml',
-  };
+| Signal | Implementation | Priority |
+|--------|---------------|----------|
+| Author bylines | Link to author profile page on every content page | Critical |
+| Person schema | `@type: Person` with `name`, `jobTitle`, `sameAs`, `knowsAbout` | Critical |
+| Publication dates | `datePublished` + `dateModified` in Article schema + visible on page | Critical |
+| About page | Organization details, team, credentials | High |
+| External profiles | `sameAs` links to LinkedIn, GitHub, Twitter in Person schema | High |
+| Contact info | Visible contact/support information | Medium |
+| Privacy policy | Link in footer to privacy policy page | Medium |
+| HTTPS | All pages served over HTTPS | Critical |
+| External citations | Reference authoritative sources in content | High (for GEO) |
+
+### Author Component Pattern
+
+```tsx
+export function AuthorBox({ author }: { author: Author }) {
+  return (
+    <>
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        name: author.name,
+        url: author.profileUrl,
+        jobTitle: author.title,
+        worksFor: { '@type': 'Organization', name: 'Brand Name' },
+        sameAs: [author.linkedIn, author.twitter, author.github].filter(Boolean),
+        knowsAbout: author.expertise,
+      }} />
+      <div className="author-box">
+        <img src={author.avatar} alt={author.name} />
+        <div>
+          <strong>{author.name}</strong>
+          <p>{author.bio}</p>
+          <a href={author.linkedIn} rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+    </>
+  );
 }
 ```
 
-### sitemap.xml (Next.js)
+## Crawlability & Indexing
+
+### sitemap.ts (Next.js)
 
 ```ts
 // app/sitemap.ts
 import type { MetadataRoute } from 'next';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const pages = await getAllPages();
+  const pages = await getAllPublishedPages();
 
   return [
     {
@@ -232,22 +286,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 }
 ```
 
+**Large sitemaps (50K+ URLs):** Use `generateSitemaps()` to split automatically.
+
 ### Meta Robots
 
 | Directive | When to use |
 |-----------|-------------|
-| `index, follow` | Default for public pages (don't need to set explicitly) |
-| `noindex, follow` | Internal pages (login, dashboard) - still follow links |
+| `index, follow` | Default for public pages (don't set explicitly) |
+| `noindex, follow` | Internal pages (login, dashboard) — still follow links |
 | `noindex, nofollow` | Completely private pages |
 
-```tsx
-// Next.js per-page
-export const metadata: Metadata = {
-  robots: { index: false, follow: true },
-};
-```
-
 ## Performance & Core Web Vitals
+
+### Current Thresholds (2025-2026)
+
+| Metric | Good | Competitive | Poor |
+|--------|------|-------------|------|
+| **LCP** | < 2.5s | < 2.0s | > 4.0s |
+| **INP** (replaced FID) | < 200ms | < 150ms | > 500ms |
+| **CLS** | < 0.1 | < 0.05 | > 0.25 |
+
+Sites with LCP > 3.0s: 23% more traffic loss. Poor INP: 31% more traffic loss.
 
 ### Image Optimization
 
@@ -255,37 +314,119 @@ export const metadata: Metadata = {
 |-------|-----|
 | Using `<img>` instead of `next/image` | Replace with `<Image>` component |
 | Missing width/height (CLS) | Add explicit dimensions or use `fill` prop |
-| No lazy loading for below-fold images | Default in `next/image`; add `loading="lazy"` for plain `<img>` |
-| Missing alt text | Add descriptive alt text for every image |
-| No WebP/AVIF | `next/image` auto-converts; for plain sites use `<picture>` |
-| Hero image not prioritized | Add `priority` prop to above-fold `<Image>` |
+| Hero image not prioritized | Add `priority` prop + `placeholder="blur"` |
+| No WebP/AVIF | `next/image` auto-converts |
+| Missing alt text | Add descriptive alt text (Korean alt text for Korean pages) |
+
+### INP Optimization
+
+```tsx
+// 1. Server Components by default (zero client JS)
+// app/products/page.tsx — Server Component, no 'use client'
+export default async function ProductsPage() {
+  const products = await getProducts();
+  return <ProductList products={products} />;
+}
+
+// 2. startTransition for non-urgent state updates
+'use client';
+import { useTransition } from 'react';
+
+function SearchFilter({ onFilter }: { onFilter: (q: string) => void }) {
+  const [, startTransition] = useTransition();
+  return (
+    <input onChange={(e) => {
+      startTransition(() => onFilter(e.target.value));
+    }} />
+  );
+}
+
+// 3. Lazy load heavy client components
+import dynamic from 'next/dynamic';
+const HeavyChart = dynamic(() => import('@/components/Chart'), {
+  loading: () => <div style={{ minHeight: 400 }}>Loading...</div>,
+  ssr: false,
+});
+
+// 4. Third-party scripts after interaction
+import Script from 'next/script';
+<Script src="https://analytics.example.com/script.js" strategy="lazyOnload" />
+```
 
 ### Font Optimization
 
 ```tsx
-// Next.js - use next/font
 import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
-// For Korean
+// Korean
 import { Noto_Sans_KR } from 'next/font/google';
 const notoSansKR = Noto_Sans_KR({ subsets: ['latin'], weight: ['400', '700'] });
 ```
 
-### Bundle Size
+## Internal Linking
 
-| Check | Fix |
-|-------|-----|
-| Large client bundles | Move components to Server Components (default in App Router) |
-| Unused dependencies | Run `npx depcheck` |
-| No dynamic imports for heavy components | Use `next/dynamic` or `React.lazy` |
+### Guidelines
+
+- **2-5 contextual links per 1,000 words**
+- **3-click rule**: Every critical page reachable within 3 clicks from homepage
+- Total page links under 150 to maintain link equity
+- Contextual links in body > navigation/footer links
+- Use descriptive, varied anchor text (not "click here" or exact-match keywords)
+
+### Pillar-Cluster Model
+
+```
+Homepage
+  |
+  +-- /tools  (pillar)
+  |     +-- /tools/vc-scorer  (cluster → links to /blog/how-to-pitch)
+  |     +-- /tools/idea-scorer  (cluster → links to /blog/startup-ideas)
+  |
+  +-- /blog  (pillar)
+  |     +-- /blog/how-to-pitch  (cluster → links to /tools/vc-scorer)
+  |     +-- /blog/startup-ideas  (cluster → links to /tools/idea-scorer)
+```
+
+### Breadcrumb Component with Schema
+
+```tsx
+export function Breadcrumbs({ items }: { items: { name: string; href: string }[] }) {
+  return (
+    <>
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: items.map((item, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: item.name,
+          item: `https://example.com${item.href}`,
+        })),
+      }} />
+      <nav aria-label="Breadcrumb">
+        <ol>
+          {items.map((item, i) => (
+            <li key={item.href}>
+              {i < items.length - 1 ? (
+                <a href={item.href}>{item.name}</a>
+              ) : (
+                <span aria-current="page">{item.name}</span>
+              )}
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </>
+  );
+}
+```
 
 ## i18n (Korean + English)
 
 ### hreflang Tags
 
 ```tsx
-// In metadata
 alternates: {
   canonical: 'https://example.com/page',
   languages: {
@@ -296,29 +437,20 @@ alternates: {
 }
 ```
 
-### Naver SEO
+### Naver SEO (see `references/naver-optimization.md` for full guide)
 
 | Check | Fix |
 |-------|-----|
-| Naver site verification | Add `<meta name="naver-site-verification" content="...">` |
-| Naver Search Advisor registered | Register at https://searchadvisor.naver.com/ |
-| Korean meta description | Separate Korean meta description, 80-120 chars |
-| Korean OG tags | Separate `og:locale` for `ko_KR` |
+| Naver site verification | `<meta name="naver-site-verification" content="...">` |
+| Naver Search Advisor | Register at https://searchadvisor.naver.com/ |
+| Korean meta description | 70-80 chars (mobile-safe: 40 chars) |
+| Keywords meta tag | Naver still reads it: `metadata.keywords` |
+| Korean OG locale | `og:locale` set to `ko_KR` |
+| SSR for Yeti | Naver's Yeti bot has limited JS rendering |
 
 ### Korean-Specific Patterns
 
-```tsx
-// Root layout metadata for Korean
-export const metadata: Metadata = {
-  verification: {
-    other: {
-      'naver-site-verification': 'your-naver-verification-code',
-    },
-  },
-};
-```
-
-- Use Korean-language structured data (`"inLanguage": "ko"`) for Korean pages
+- Korean title tags: under 40 characters
+- Korean structured data: `"inLanguage": "ko"` for Korean pages
 - Include both Korean and English site names in Organization schema
-- Korean title tags: keep under 30 characters (shorter than English)
-- Korean meta descriptions: 80-120 characters optimal
+- Korean `<html lang="ko">` attribute
