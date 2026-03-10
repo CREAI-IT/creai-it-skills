@@ -14,6 +14,7 @@ A Claude Code plugin marketplace with production-grade skills for content creati
 | `seo-geo-optimizer` | Development | Audit and optimize for SEO and AI search engines (GEO) |
 | `launch-playbook` | Marketing & Growth | GTM maestro for product launches across PH, Twitter/X, LinkedIn, HN, Reddit, email, press, and Korean platforms |
 | `content-engine` | Marketing & Growth | Content repurposing engine — atomize and reassemble across 12+ platforms |
+| `cold-outreach-system` | Sales & Outreach | Cold email sequences, LinkedIn outreach, and Gmail integration for automated sending |
 
 ## Installation
 
@@ -34,6 +35,7 @@ A Claude Code plugin marketplace with production-grade skills for content creati
 /plugin install seo-geo-optimizer@creai-it-skills
 /plugin install launch-playbook@creai-it-skills
 /plugin install content-engine@creai-it-skills
+/plugin install cold-outreach-system@creai-it-skills
 ```
 
 Skills auto-update when new versions are pushed.
@@ -51,6 +53,9 @@ SEO and AI search engine optimization for web projects.
 
 ### Marketing & Growth
 Launch strategy, go-to-market execution, and content repurposing across global and Korean platforms.
+
+### Sales & Outreach
+Cold outreach system with ICP targeting, personalized email sequences, LinkedIn outreach, and optional Gmail automation.
 
 ## License
 

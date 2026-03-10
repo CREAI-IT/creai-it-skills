@@ -51,6 +51,12 @@
       "source": "./plugins/content-engine",
       "description": "Content repurposing engine that atomizes source content and reassembles into platform-native adaptations across 12+ platforms",
       "version": "1.0.0"
+    },
+    {
+      "name": "cold-outreach-system",
+      "source": "./plugins/cold-outreach-system",
+      "description": "Cold outreach system with ICP targeting, personalized email sequences, LinkedIn outreach, and optional Gmail MCP integration for automated sending",
+      "version": "1.0.0"
     }
   ]
 }

@@ -68,6 +68,14 @@
       "tags": ["content", "repurposing", "social-media", "atomization", "multi-platform", "calendar", "korean"],
       "version": "1.0.0",
       "install_command": "/plugin install content-engine@creai-it-skills"
+    },
+    {
+      "name": "cold-outreach-system",
+      "category": "Sales & Outreach",
+      "description": "Cold outreach system with ICP targeting, personalized multi-touch email sequences, LinkedIn outreach, objection handling, and optional Gmail MCP integration for automated draft creation and sending",
+      "tags": ["cold-email", "outreach", "sales", "outbound", "lead-generation", "linkedin", "gmail", "personalization"],
+      "version": "1.0.0",
+      "install_command": "/plugin install cold-outreach-system@creai-it-skills"
     }
   ]
 }
