@@ -2,10 +2,7 @@
   "name": "powerpoint-deck-generator",
   "version": "2.0.0",
   "description": "Generate consulting-quality presentation decks as HTML/CSS/JS with 16:9 aspect ratio. Features SCR narrative architecture, ghost deck planning, action titles, 9 design reference modules (typography, color, layout, texture, slide types, narrative structure, quality checklist, print export), and Playwright-based pixel-perfect PDF export.",
-  "skills": [
-    {
-      "name": "powerpoint-deck-generator",
-      "path": "skills/powerpoint-deck-generator/SKILL.md"
-    }
-  ]
+  "author": {
+    "name": "CREAI-IT"
+  }
 }

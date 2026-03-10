@@ -2,10 +2,7 @@
   "name": "quant-algorithm-creator",
   "version": "1.0.0",
   "description": "Create and optimize crypto mean reversion trading algorithms",
-  "skills": [
-    {
-      "name": "quant-algorithm-creator",
-      "path": "skills/quant-algorithm-creator/SKILL.md"
-    }
-  ]
+  "author": {
+    "name": "CREAI-IT"
+  }
 }

@@ -2,10 +2,7 @@
   "name": "cold-outreach-system",
   "version": "1.0.0",
   "description": "Cold outreach system that designs ICP-targeted, personalized email sequences and LinkedIn outreach campaigns. Supports two modes: content-only (generates copy for manual sending) and Gmail-integrated (creates drafts and sends via Gmail MCP). Produces ICP definitions, multi-touch email sequences, personalization frameworks, follow-up cadences, LinkedIn messages, objection handling scripts, and deliverability setup guides.",
-  "skills": [
-    {
-      "name": "cold-outreach-system",
-      "path": "skills/cold-outreach-system/SKILL.md"
-    }
-  ]
+  "author": {
+    "name": "CREAI-IT"
+  }
 }

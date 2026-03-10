@@ -2,10 +2,7 @@
   "name": "research-consulting",
   "version": "1.0.0",
   "description": "MBB-style research and strategic synthesis for decision-grade deliverables",
-  "skills": [
-    {
-      "name": "research-consulting",
-      "path": "skills/research-consulting/SKILL.md"
-    }
-  ]
+  "author": {
+    "name": "CREAI-IT"
+  }
 }
