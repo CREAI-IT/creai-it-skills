@@ -1,7 +1,11 @@
 {
   "name": "seo-geo-optimizer",
+  "version": "1.0.0",
   "description": "Audit and optimize for SEO and AI search engines (GEO)",
-  "author": {
-    "name": "CREAI-IT"
-  }
+  "skills": [
+    {
+      "name": "seo-geo-optimizer",
+      "path": "skills/seo-geo-optimizer/SKILL.md"
+    }
+  ]
 }

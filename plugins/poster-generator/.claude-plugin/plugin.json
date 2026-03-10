@@ -1,7 +1,11 @@
 {
   "name": "poster-generator",
+  "version": "1.0.0",
   "description": "Create posters, flyers, banners, social media graphics as HTML files",
-  "author": {
-    "name": "CREAI-IT"
-  }
+  "skills": [
+    {
+      "name": "poster-generator",
+      "path": "skills/poster-generator/SKILL.md"
+    }
+  ]
 }
