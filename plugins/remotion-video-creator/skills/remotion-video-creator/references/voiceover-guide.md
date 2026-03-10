@@ -56,15 +56,29 @@ node <skill-dir>/scripts/voiceover_gen.mjs --list-voices
 
 #### Recommended Voices by Video Type
 
+**English voices:**
+
 | Video Type | Voice | ID | Why |
 |---|---|---|---|
-| **Tech/Product** | Rachel | `21m00Tcm4TlvDq8ikWAM` | Warm, clear, professional British female |
-| **Corporate** | Adam | `pNInz6obpgDQGcFmaJgB` | Authoritative, deep, American male |
-| **Startup/Energetic** | Josh | `TxGEqnHWrfWFTfGW9XjX` | Upbeat, young American male |
-| **Narrative/Story** | Bella | `EXAVITQu4vr4xnSDxMaL` | Expressive, engaging female |
-| **Casual/Friendly** | Antoni | `ErXwobaYiN019PkySvjV` | Warm, conversational male |
-| **Luxury/Premium** | Dorothy | `ThT5KcBeYPX3keUQqHPh` | Elegant, refined British female |
-| **News/Educational** | Sarah | `EXAVITQu4vr4xnSDxMaL` | Clear, young American female |
+| **Tech/Product** | Sarah | `EXAVITQu4vr4xnSDxMaL` | Mature, reassuring, professional American female |
+| **Corporate** | Adam | `pNInz6obpgDQGcFmaJgB` | Dominant, firm, authoritative American male |
+| **Startup/Energetic** | Liam | `TX3LPaxmHKxFdv7VOQHJ` | Energetic social media creator, confident American male |
+| **Narrative/Story** | George | `JBFqnCBsd6RMkjVDRZzb` | Warm, captivating storyteller, British male |
+| **Casual/Friendly** | Roger | `CwhRBWXzGAHq8TQ4Fs17` | Laid-back, casual, classy American male |
+| **Educational** | Alice | `Xb7hH8MSUJpSbSDYk0k2` | Clear, engaging educator, British female |
+| **Luxury/Premium** | Lily | `pFZP5JQG7iQjIQuC4Bku` | Velvety actress, confident British female |
+| **Neutral/Informative** | River | `SAz9YHcvj6GT2YYXdXww` | Relaxed, neutral, calm gender-neutral American |
+| **Fun/Playful** | Jessica | `cgSgspJ2msm6clMCkdW9` | Playful, bright, warm American female |
+| **Wise/Authoritative** | Bill | `pqHfZKP75CvOlQylNhV4` | Wise, mature, balanced, crisp American male |
+
+**Korean voices:**
+
+| Video Type | Voice | ID | Why |
+|---|---|---|---|
+| **Narrative/Calm** | Selly Han | `ETPP7D0aZVdEj12Aa7ho` | Calm, storytelling, professional Korean female |
+| **Conversational** | Rumi Oh | `sf8Bpb1IU97NI9BHSMRf` | Soft, conversational, Seoul accent Korean female |
+| **Social/Young** | JISOO | `iWLjl1zCuqXRkW6494ve` | Social media, young, standard Korean female |
+| **Meditation/Calm** | Chungman | `8MwPLtBplylvbrksiBOC` | Meditative, calm, Seoul accent Korean female |
 
 For more voices, browse: `--list-voices` or ask user for preference.
 
