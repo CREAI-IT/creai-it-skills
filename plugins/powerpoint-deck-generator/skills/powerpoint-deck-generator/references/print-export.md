@@ -76,15 +76,76 @@ The viewer's `P` key triggers `window.print()` with `@media print` CSS. The view
 
 ---
 
+## BANNED CSS Properties (non-negotiable)
+
+<CRITICAL>
+These CSS properties create rectangular "drag mark" / "selection highlight" artifacts in Playwright PDF exports. They look correct in the browser but produce visible boxes, glows, and highlight rectangles in the exported PDF. This has been confirmed across multiple slides and is a fundamental Chromium screenshot compositing issue.
+
+**DO NOT USE THESE PROPERTIES ANYWHERE IN ANY SLIDE. ZERO EXCEPTIONS.**
+</CRITICAL>
+
+### 1. `text-shadow` — BANNED
+
+Any `text-shadow` with blur ≥ 2px creates a visible rectangular highlight box behind text in Playwright screenshots. It looks like the text was selected/dragged.
+
+```css
+/* BANNED — creates rectangular highlight artifact in PDF */
+.hero-number { text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.label { text-shadow: 0 0 12px rgba(129,140,248,0.4); }
+
+/* ALLOWED — zero blur, crisp offset only */
+.text { text-shadow: 1px 1px 0 rgba(0,0,0,0.5); }
+```
+
+**Rule: Never use `text-shadow` with blur > 0px.**
+
+### 2. `box-shadow` with blur on decorative/small elements — BANNED
+
+`box-shadow` with blur on small elements (dots, circles, nodes, badges) creates rectangular glow artifacts that look like selection highlights in PDF export. The smaller the element, the worse the artifact.
+
+```css
+/* BANNED — creates highlight rectangle around small dot */
+.bullet::before { box-shadow: 0 0 6px rgba(129,140,248,0.5); }
+.node-circle { box-shadow: 0 0 24px rgba(129,140,248,0.15); }
+.highlight-node { box-shadow: 0 0 32px rgba(129,140,248,0.3); }
+
+/* ALLOWED — box-shadow on large containers (cards, panels) is fine */
+.slide { box-shadow: 0 20px 80px rgba(0,0,0,0.6); }
+.card { box-shadow: 0 4px 24px rgba(0,0,0,0.2); }
+```
+
+**Rule: Never use `box-shadow` with blur on elements smaller than 100px. For glowing effects on nodes/dots/badges, use a brighter `border` or `background` color instead.**
+
+### 3. `backdrop-filter` in slide CSS — AVOID
+
+While the viewer auto-fixes `backdrop-filter` for browser print, including it in slide-specific `<style>` blocks can cause subtle rendering differences between browser and Playwright export.
+
+**Rule: Use solid `background` colors with low alpha (`rgba(14,14,20,0.6)`) instead. The visual difference is negligible on dark themes, and it exports cleanly every time.**
+
+### Alternatives for visual depth
+
+Instead of banned properties, use these export-safe alternatives:
+
+| Desired Effect | Banned Approach | Export-Safe Alternative |
+|---|---|---|
+| Glowing text | `text-shadow: 0 0 Xpx` | Brighter `color` value or accent color |
+| Glowing dot/node | `box-shadow: 0 0 Xpx` | Brighter `border` + slightly lighter `background` |
+| Elevated card | `box-shadow: 0 0 30px` on small el | `border: 1px solid rgba(accent, 0.25)` + lighter bg |
+| Glass blur | `backdrop-filter: blur(12px)` | `background: rgba(14,14,20,0.6)` (solid-ish) |
+| Text prominence | `text-shadow` glow | `font-weight: 700` + accent `color` |
+
+---
+
 ## Print-Safe CSS Checklist
 
 | Pattern | Print-Safe? | Fix if not |
 |---------|------------|------------|
-| `backdrop-filter: blur()` | Auto-fixed by viewer | No action needed |
+| `text-shadow` (any blur > 0) | **BANNED** | Remove entirely. Use brighter color/weight instead. |
+| `box-shadow` with blur on elements < 100px | **BANNED** | Remove. Use border/background color for glow effect. |
+| `backdrop-filter: blur()` | Auto-fixed by viewer | Prefer solid `rgba()` background in slide CSS. |
 | Semi-transparent `rgba()` backgrounds | Auto-fixed by `exportPDF()` JS | No action needed |
 | Flex `justify-content: center` for text | Unreliable | Add `text-align: center; display: block; width: 100%` on text element |
 | CSS Grid layouts | Safe | — |
 | `position: absolute` elements | Safe | — |
 | CSS `transform` | Disabled in `@media print` for `.slide-container` | — |
 | Decorative grid lines (via `background-image`) | May render as artifacts | Add `.grid-lines { display: none !important; }` in `@media print` |
-| `text-shadow` with large blur (4px+) | Creates visible rectangular highlight/selection box behind text in Playwright screenshots and print, especially on large bold text over gradient backgrounds | Remove `text-shadow` on hero numbers inside colored bars. Use only on text over flat dark backgrounds if needed, with blur ≤ 2px. |

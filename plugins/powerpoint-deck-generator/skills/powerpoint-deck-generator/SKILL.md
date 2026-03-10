@@ -214,6 +214,24 @@ Copy from `assets/base-styles.css`, then customize based on plan.md's Design Dir
 - Override default fonts, colors, backgrounds
 - Add deck-specific utility classes
 
+#### BANNED CSS — Export-Breaking Properties
+
+<CRITICAL>
+These CSS properties create "drag mark" / "selection highlight" artifacts in Playwright PDF export. They render correctly in the browser but produce visible rectangular boxes in the exported PDF. This is a confirmed Chromium screenshot compositing bug. NEVER use them.
+
+**HARD-BANNED — zero exceptions on any slide:**
+- `text-shadow` with blur > 0px (e.g., `text-shadow: 0 2px 8px rgba(...)`) — creates rectangular highlight behind text
+- `box-shadow` with blur on elements smaller than 100px (dots, circles, nodes, badges) — creates rectangular glow artifacts
+- `backdrop-filter` in slide-specific `<style>` blocks — use solid `rgba()` backgrounds instead
+
+**Use instead:**
+- Glowing text → brighter `color` or accent `font-weight: 700`
+- Glowing dot/node → brighter `border` color + lighter `background`
+- Glass effect → `background: rgba(14,14,20,0.6)` (no blur needed)
+
+See `references/print-export.md` for the full banned list, safe alternatives, and examples.
+</CRITICAL>
+
 #### 4c: Create slide files
 
 **`slide-N.html`** (one per slide) — Based on `assets/slide-template.html`:
@@ -470,3 +488,4 @@ These fixes are built into the viewer template and apply automatically to all fu
 | plan.md doesn't match final slides | Final slides must follow plan.md exactly — it's the source of truth |
 | `backdrop-filter` elements vanish in browser print PDF | Chrome's print engine hides elements with `backdrop-filter` AND all children. The viewer template handles this automatically (CSS disables backdrop-filter in `@media print`, JS replaces semi-transparent backgrounds with solid ones before printing). No action needed if using the template. |
 | Text inside flex containers shifts in print/PDF export | Never rely on flex `justify-content: center` alone for text centering. Always add `display: block; width: 100%; text-align: center;` on the text element as a failsafe. Especially critical for hero numbers inside colored bars/boxes. |
+| **"Drag mark" artifacts in PDF export (THE #3 MISTAKE)** | **NEVER use `text-shadow` (any blur > 0), `box-shadow` with blur on elements < 100px (dots, nodes, badges), or `backdrop-filter` in slide CSS. These create rectangular highlight/selection artifacts in Playwright export. Use brighter colors, borders, and solid rgba() backgrounds instead. See BANNED CSS section above.** |
