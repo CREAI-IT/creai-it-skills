@@ -1,7 +1,11 @@
 {
   "name": "remotion-video-creator",
-  "description": "Create motion graphics and animated video content with React and Remotion",
-  "author": {
-    "name": "CREAI-IT"
-  }
+  "version": "1.1.0",
+  "description": "Create motion graphics and animated video content with React and Remotion. Supports optional ElevenLabs voiceover generation.",
+  "skills": [
+    {
+      "name": "remotion-video-creator",
+      "path": "skills/remotion-video-creator/SKILL.md"
+    }
+  ]
 }

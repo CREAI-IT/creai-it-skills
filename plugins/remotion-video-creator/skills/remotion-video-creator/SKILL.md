@@ -1,6 +1,6 @@
 ---
 name: remotion-video-creator
-description: Use when creating Remotion videos, motion graphics, or animated video content with React. Triggers on requests to "create a video", "make a motion graphic", "animate with Remotion", "build a video component", "generate a promo video", or any video/animation creation task using Remotion. Also triggers on requests to add new video compositions to an existing Remotion project.
+description: Use when creating Remotion videos, motion graphics, or animated video content with React. Triggers on requests to "create a video", "make a motion graphic", "animate with Remotion", "build a video component", "generate a promo video", or any video/animation creation task using Remotion. Also triggers on requests to add new video compositions to an existing Remotion project. Supports optional ElevenLabs voiceover — triggers on "add voiceover", "narration", "voice over", "TTS", or "ElevenLabs".
 ---
 
 # Remotion Video Creator
@@ -250,6 +250,39 @@ npx remotion render src/index.ts <composition-id> out/video.mp4
 | 4:5   | 1080x1350  | Instagram feed |
 
 Default to 16:9 / 1920x1080 / 30fps unless user specifies otherwise.
+
+## Voiceover (Optional Add-On)
+
+Add AI-generated voiceover narration to any video using ElevenLabs Text-to-Speech. Available at any point in the workflow — during planning, after scene code, or before rendering.
+
+**Requirements:** `ELEVENLABS_API_KEY` environment variable must be set.
+
+**When user requests voiceover**, read [references/voiceover-guide.md](references/voiceover-guide.md) for the complete workflow:
+1. Generate voiceover script from plan.md (or user provides script)
+2. User approves/edits script
+3. Select voice + model (guide has voice recommendations by video type)
+4. Run `scripts/voiceover_gen.mjs` per scene to generate MP3 files
+5. Adjust scene `durationInFrames` to match audio duration
+6. Wire `<Audio>` from `@remotion/media` into scene components
+
+**Quick voice generation:**
+```bash
+node "<skill-dir>/scripts/voiceover_gen.mjs" \
+  --text "Your script here" \
+  --voice "21m00Tcm4TlvDq8ikWAM" \
+  --output "./public/assets/<video>/voiceover/vo-scene001.mp3"
+```
+
+**Quick audio wiring in scene:**
+```tsx
+import { Audio } from '@remotion/media';
+import { staticFile } from 'remotion';
+
+// Inside scene component:
+<Audio src={staticFile('assets/<video>/voiceover/vo-scene001.mp3')} volume={1} />
+```
+
+Install `@remotion/media` if needed: `npx remotion add @remotion/media`
 
 ## Single Scene Videos
 

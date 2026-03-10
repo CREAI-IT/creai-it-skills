@@ -24,9 +24,9 @@
     {
       "name": "remotion-video-creator",
       "category": "Content & Visual",
-      "description": "Create motion graphics and animated video content with React and Remotion",
-      "tags": ["react", "video", "motion-graphics", "remotion", "animation"],
-      "version": "1.0.0",
+      "description": "Create motion graphics and animated video content with React and Remotion. Supports optional ElevenLabs voiceover generation.",
+      "tags": ["react", "video", "motion-graphics", "remotion", "animation", "voiceover", "elevenlabs"],
+      "version": "1.1.0",
       "install_command": "/plugin install remotion-video-creator@creai-it-skills"
     },
     {

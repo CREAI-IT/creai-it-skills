@@ -87,4 +87,4 @@ The viewer's `P` key triggers `window.print()` with `@media print` CSS. The view
 | `position: absolute` elements | Safe | — |
 | CSS `transform` | Disabled in `@media print` for `.slide-container` | — |
 | Decorative grid lines (via `background-image`) | May render as artifacts | Add `.grid-lines { display: none !important; }` in `@media print` |
-| `text-shadow` | Can cause visual weight shift in print | Keep shadows subtle or test in print |
+| `text-shadow` with large blur (4px+) | Creates visible rectangular highlight/selection box behind text in Playwright screenshots and print, especially on large bold text over gradient backgrounds | Remove `text-shadow` on hero numbers inside colored bars. Use only on text over flat dark backgrounds if needed, with blur ≤ 2px. |
