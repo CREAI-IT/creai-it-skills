@@ -16,9 +16,9 @@
     {
       "name": "powerpoint-deck-generator",
       "category": "Content & Visual",
-      "description": "Create presentation decks and slides as HTML files",
-      "tags": ["html", "presentation", "slides", "deck", "powerpoint"],
-      "version": "1.0.0",
+      "description": "Consulting-quality presentation decks as HTML with SCR narrative architecture, ghost deck planning, action titles, 9 design reference modules, and Playwright-based pixel-perfect PDF export",
+      "tags": ["html", "presentation", "slides", "deck", "powerpoint", "pdf-export", "consulting"],
+      "version": "2.0.0",
       "install_command": "/plugin install powerpoint-deck-generator@creai-it-skills"
     },
     {

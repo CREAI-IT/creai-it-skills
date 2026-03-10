@@ -13,8 +13,8 @@
     {
       "name": "powerpoint-deck-generator",
       "source": "./plugins/powerpoint-deck-generator",
-      "description": "Create presentation decks and slides as HTML files",
-      "version": "1.0.0"
+      "description": "Consulting-quality presentation decks as HTML with SCR narrative architecture, 9 design modules, and pixel-perfect PDF export",
+      "version": "2.0.0"
     },
     {
       "name": "remotion-video-creator",

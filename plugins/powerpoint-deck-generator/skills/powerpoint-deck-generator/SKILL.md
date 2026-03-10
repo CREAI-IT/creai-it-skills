@@ -71,7 +71,7 @@ Before any visual decisions, structure the argument:
 3. **Apply the storyline test**: Read all action titles in sequence. They must form a coherent, logical argument.
 
 For detailed slide structure methodology, read:
-- `~/.claude/skills/powerpoint-deck-generator/references/design-guide.md`
+- `~/.claude/skills/powerpoint-deck-generator/references/narrative-structure.md` — action titles, SCR framework, ghost deck, storyline test
 
 #### 2c: Design Direction
 
@@ -85,7 +85,8 @@ Commit to a bold aesthetic direction:
 6. **Differentiator** — One signature element that makes this deck unforgettable.
 
 For detailed design principles, read:
-- `~/.claude/skills/powerpoint-deck-generator/references/design-guide.md`
+- `~/.claude/skills/powerpoint-deck-generator/references/typography.md` — font selection, banned fonts, size hierarchy
+- `~/.claude/skills/powerpoint-deck-generator/references/color-palette.md` — palette construction, accent strategy, theme examples
 
 #### 2d: Write plan.md
 
@@ -195,8 +196,15 @@ Read the following asset files to use as templates:
 - `~/.claude/skills/powerpoint-deck-generator/assets/slide-template.html` — Template for individual slide files
 - `~/.claude/skills/powerpoint-deck-generator/assets/base-styles.css` — Base CSS to copy and customize as `styles.css`
 
-For slide type examples and design principles, read:
-- `~/.claude/skills/powerpoint-deck-generator/references/design-guide.md`
+For design references, read the module index first, then load modules per phase:
+- `~/.claude/skills/powerpoint-deck-generator/references/index.md` — routing table: which modules to read per task phase
+
+Key modules for the Build phase:
+- `~/.claude/skills/powerpoint-deck-generator/references/layout-composition.md` — density rules, card sizing, spatial patterns
+- `~/.claude/skills/powerpoint-deck-generator/references/typography.md` — font hierarchy, size enforcement
+- `~/.claude/skills/powerpoint-deck-generator/references/texture-atmosphere.md` — CSS textures, grain, glows, decorative elements
+- `~/.claude/skills/powerpoint-deck-generator/references/slide-types.md` — patterns per slide type (title, data, comparison, process, closing)
+- `~/.claude/skills/powerpoint-deck-generator/references/print-export.md` — PDF export fixes (backdrop-filter, flex centering)
 
 #### 4b: Create styles.css
 
@@ -425,11 +433,16 @@ python3 export_pdf.py --port 8731        # Custom port (default: auto-find)
 python3 export_pdf.py --no-server        # Don't auto-start server (expects one running)
 ```
 
-### Browser Print (fallback only)
+### Browser Print (quick export)
 
-The viewer's `P` key triggers `window.print()`. This is a quick fallback but **not recommended** — browser print engines can break flexbox centering and produce inconsistent results. Always use `export_pdf.py` for the final PDF.
+The viewer's `P` key triggers `window.print()` with `@media print` CSS. The viewer template includes two automatic fixes for Chrome's print rendering bugs:
 
-**No CSS restrictions.** Playwright uses real Chromium rendering. Use any CSS freely: `backdrop-filter`, `radial-gradient()`, CSS variables, `mix-blend-mode`, complex `clip-path`, etc.
+1. **CSS fix**: `@media print` globally disables `backdrop-filter` on all elements (Chrome hides elements with `backdrop-filter` AND all their children in print mode).
+2. **JS fix**: `exportPDF()` scans all elements for `backdrop-filter` usage before printing and temporarily replaces semi-transparent `rgba()` backgrounds with solid `#141420` — because without the blur effect, semi-transparent backgrounds become invisible against dark slide canvases.
+
+These fixes are built into the viewer template and apply automatically to all future decks.
+
+**No CSS restrictions.** Playwright uses real Chromium rendering. Use any CSS freely: `backdrop-filter`, `radial-gradient()`, CSS variables, `mix-blend-mode`, complex `clip-path`, etc. The browser print path also handles these correctly via the built-in fixes above.
 
 ## Common Mistakes
 
@@ -455,3 +468,5 @@ The viewer's `P` key triggers `window.print()`. This is a quick fallback but **n
 | Not customizing base-styles.css | The base is a starting point — always set theme colors and fonts |
 | Slides not standalone-viewable | Each slide-N.html must link to styles.css and include scaling JS |
 | plan.md doesn't match final slides | Final slides must follow plan.md exactly — it's the source of truth |
+| `backdrop-filter` elements vanish in browser print PDF | Chrome's print engine hides elements with `backdrop-filter` AND all children. The viewer template handles this automatically (CSS disables backdrop-filter in `@media print`, JS replaces semi-transparent backgrounds with solid ones before printing). No action needed if using the template. |
+| Text inside flex containers shifts in print/PDF export | Never rely on flex `justify-content: center` alone for text centering. Always add `display: block; width: 100%; text-align: center;` on the text element as a failsafe. Especially critical for hero numbers inside colored bars/boxes. |

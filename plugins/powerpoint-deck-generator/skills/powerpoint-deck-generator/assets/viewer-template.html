@@ -184,6 +184,17 @@
             .controls, .progress, .hints, .loading-msg {
                 display: none !important;
             }
+
+            /* === backdrop-filter print fix ===
+               Chrome's print engine completely hides elements that use
+               backdrop-filter — including ALL their children. This is a
+               known Chromium bug. Globally disable it in print mode.
+               The exportPDF() JS function handles replacing transparent
+               backgrounds with solid ones before printing. */
+            *, *::before, *::after {
+                -webkit-backdrop-filter: none !important;
+                backdrop-filter: none !important;
+            }
         }
     </style>
 </head>
@@ -320,10 +331,32 @@
 
         /* === PDF Export (browser print) ===
          * Uses window.print() with @media print CSS for native rendering.
+         * Before printing, scans all elements for backdrop-filter usage and
+         * replaces their semi-transparent backgrounds with solid opaque ones,
+         * because Chrome's print engine hides backdrop-filter elements entirely.
          * For pixel-perfect export: python3 export_pdf.py
          */
         function exportPDF() {
+            const fixed = [];
+            container.querySelectorAll('*').forEach(el => {
+                const cs = getComputedStyle(el);
+                if (cs.backdropFilter && cs.backdropFilter !== 'none') {
+                    const bg = cs.backgroundColor;
+                    // Semi-transparent backgrounds become invisible without blur
+                    // Replace with a solid dark surface color
+                    if (bg.startsWith('rgba') && !bg.endsWith(', 1)')) {
+                        fixed.push({ el, origBg: el.style.backgroundColor });
+                        el.style.backgroundColor = '#141420';
+                    }
+                }
+            });
             window.print();
+            // Restore original backgrounds after print dialog closes
+            requestAnimationFrame(() => {
+                fixed.forEach(({ el, origBg }) => {
+                    el.style.backgroundColor = origBg;
+                });
+            });
         }
 
         /* === Keyboard Controls === */

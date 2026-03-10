@@ -7,7 +7,7 @@ A Claude Code plugin marketplace with production-grade skills for content creati
 | Skill | Category | Description |
 |-------|----------|-------------|
 | `poster-generator` | Content & Visual | Create posters, flyers, banners, social media graphics as HTML |
-| `powerpoint-deck-generator` | Content & Visual | Create presentation decks and slides as HTML |
+| `powerpoint-deck-generator` | Content & Visual | Consulting-quality decks with SCR narrative, 9 design modules, PDF export |
 | `remotion-video-creator` | Content & Visual | Create motion graphics and animated video with React + Remotion |
 | `research-consulting` | Strategy | MBB-style research and strategic synthesis |
 | `quant-algorithm-creator` | Strategy | Create and optimize crypto mean reversion trading algorithms |
