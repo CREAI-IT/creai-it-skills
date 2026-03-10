@@ -1,0 +1,11 @@
+{
+  "name": "content-engine",
+  "version": "1.0.0",
+  "description": "Content repurposing engine that atomizes source content into typed insight units and reassembles them into platform-native adaptations across Twitter/X, LinkedIn, Instagram, Threads, Blog/SEO, Email, YouTube Shorts, TikTok, Reddit, HN, Product Hunt, and Korean platforms (Naver, Kakao). Supports bidirectional flow (long→short and short→long), voice calibration, drip scheduling, and content calendar planning.",
+  "skills": [
+    {
+      "name": "content-engine",
+      "path": "skills/content-engine/SKILL.md"
+    }
+  ]
+}

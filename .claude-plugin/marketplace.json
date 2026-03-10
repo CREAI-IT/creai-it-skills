@@ -45,6 +45,12 @@
       "source": "./plugins/launch-playbook",
       "description": "GTM maestro for planning and executing product launches across Product Hunt, Twitter/X, LinkedIn, HN, Reddit, email, press, and Korean platforms",
       "version": "1.0.0"
+    },
+    {
+      "name": "content-engine",
+      "source": "./plugins/content-engine",
+      "description": "Content repurposing engine that atomizes source content and reassembles into platform-native adaptations across 12+ platforms",
+      "version": "1.0.0"
     }
   ]
 }

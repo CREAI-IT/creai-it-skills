@@ -60,6 +60,14 @@
       "tags": ["launch", "gtm", "marketing", "product-hunt", "growth", "copywriting", "korean"],
       "version": "1.0.0",
       "install_command": "/plugin install launch-playbook@creai-it-skills"
+    },
+    {
+      "name": "content-engine",
+      "category": "Marketing & Growth",
+      "description": "Content repurposing engine that atomizes source content and reassembles into platform-native adaptations across Twitter/X, LinkedIn, Instagram, Blog, Email, YouTube Shorts, TikTok, Reddit, HN, and Korean platforms",
+      "tags": ["content", "repurposing", "social-media", "atomization", "multi-platform", "calendar", "korean"],
+      "version": "1.0.0",
+      "install_command": "/plugin install content-engine@creai-it-skills"
     }
   ]
 }
