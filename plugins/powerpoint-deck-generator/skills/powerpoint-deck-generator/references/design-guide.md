@@ -290,6 +290,14 @@ The #1 tell of an AI-generated slide is everything centered on a flat background
 - Vary column widths: `1.2fr 0.8fr` is more interesting than `1fr 1fr`
 - Allow elements to break out of the grid occasionally
 
+### Card Container Sizing (critical)
+
+**NEVER use `flex: 1` on card/grid containers inside a `flex-direction: column` parent.** This stretches cards vertically to fill remaining space, creating huge empty boxes — the #1 CSS layout bug in slide decks.
+
+**NEVER use `grid-template-rows: 1fr`** for card grids. Use `grid-template-rows: auto` so cards are content-sized.
+
+Cards must be **content-sized**: they grow to fit their text/data, not stretch to fill available space. Use `flex: 1` only for equal-width columns in row layouts.
+
 ### Whitespace & Density Balance
 
 - **Content slides**: 80–120px padding minimum

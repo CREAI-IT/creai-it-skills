@@ -244,12 +244,28 @@
                 SLIDE_FILES.map(file => fetch(file).then(r => r.text()))
             );
 
-            results.forEach((html) => {
+            results.forEach((html, idx) => {
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
                 const sourceSlide = doc.querySelector('.slide');
 
                 if (sourceSlide) {
+                    /* Extract all <style> tags from the slide's <head> and inject them
+                       into the viewer's <head>. This ensures slide-specific CSS (layouts,
+                       typography, card styles, etc.) is preserved when slides are loaded
+                       dynamically into the viewer. Without this, only the .slide div's
+                       innerHTML is extracted and all head styles are lost. */
+                    const slideId = 'slide-injected-' + idx;
+                    const styleEls = doc.querySelectorAll('head style');
+                    styleEls.forEach((styleEl) => {
+                        // Skip the boilerplate reset/scaling style block
+                        if (styleEl.textContent.includes('transform-origin: 0 0')) return;
+                        const injected = document.createElement('style');
+                        injected.setAttribute('data-slide', slideId);
+                        injected.textContent = styleEl.textContent;
+                        document.head.appendChild(injected);
+                    });
+
                     const section = document.createElement('div');
                     section.className = 'slide';
                     section.innerHTML = sourceSlide.innerHTML;

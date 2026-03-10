@@ -249,7 +249,7 @@ After the user confirms the deck looks good in the browser, **automatically** ex
 cd <deck-folder> && python3 export_pdf.py
 ```
 
-The script auto-starts its own HTTP server on an available port, so no manual server setup is needed. It screenshots each slide individually at 2x resolution via headless Chromium and combines them into a single PDF.
+The script auto-starts its own HTTP server on an available port, so no manual server setup is needed. It loads the **viewer (index.html)** in headless Chromium and navigates through each slide using the viewer's own `showSlide()` function — guaranteeing the PDF is pixel-perfect identical to the browser view. Same CSS cascade, same rendering path.
 
 This step is **mandatory** — every completed deck must have a `deck-export.pdf` ready for the user. Do not skip this step or rely on `window.print()` as a substitute.
 
@@ -345,6 +345,43 @@ Empty slides are the #1 quality failure. A slide with a title, one stat, and whi
 
 **Anti-sparse test**: After writing a slide, mentally remove the title and source. Does the remaining area look like a designed information layout — or scattered elements on empty space? If the latter, add: body text, more data points, a bottom section, or context within cards.
 
+### Card & Container Sizing (critical CSS rule)
+
+<CRITICAL>
+**NEVER use `flex: 1` on card containers inside a column (`flex-direction: column`) parent.** This is the #1 CSS layout bug — it stretches cards vertically to fill remaining space, creating huge empty boxes.
+
+Similarly, **NEVER use `grid-template-rows: 1fr`** for card grids. Use `auto` instead so cards are content-sized.
+
+**The rule**: Cards and content containers must be **content-sized** — they grow to fit their text/data, not stretch to fill available space. The canvas fill rule (80%+) means adding more *content*, not inflating box heights.
+</CRITICAL>
+
+**Correct patterns:**
+```css
+/* WRONG — cards stretch to fill remaining vertical space */
+.card-container {
+    flex: 1;           /* BAD: stretches container vertically */
+    display: grid;
+    grid-template-rows: 1fr 1fr;  /* BAD: stretches each row */
+}
+
+/* RIGHT — cards are content-sized, bottom elements use margin-top: auto */
+.card-container {
+    display: grid;
+    grid-template-rows: auto auto;   /* content-sized rows */
+    align-content: center;           /* vertically center if extra space */
+}
+
+/* Use flex: 1 ONLY for equal-width columns (flex-direction: row) */
+.column { flex: 1; }  /* OK: equal width in a row layout */
+```
+
+**When to use `flex: 1`:**
+- Equal-width columns in a **row** layout → OK
+- Card containers in a **column** layout → NEVER
+- Tables, registries, or elements that genuinely should fill available height → OK with caution
+
+**Self-check after writing each slide:** Open the slide in the browser and check if any card has large empty space below its text content. If so, the container is incorrectly using `flex: 1` or `grid-template-rows: 1fr`.
+
 ## Slide Aesthetics (mandatory)
 
 Apply these on every deck. They are non-negotiable.
@@ -370,13 +407,15 @@ Apply these on every deck. They are non-negotiable.
 
 ## PDF Export
 
-Two export methods are available:
+### How it works
 
-### 1. Browser Print (quick)
-The viewer's `P` key or PDF button triggers `window.print()` with `@media print` CSS. Each slide becomes a separate page. The browser's native rendering engine is used, so CSS renders correctly. Users must enable "Background graphics" in print settings.
+`export_pdf.py` opens the **viewer (index.html)** in headless Chromium — the exact same page the user sees in the browser. It navigates through each slide using the viewer's own `showSlide()` function, screenshots at 2x resolution (3840×2160), and combines into a PDF. This guarantees **browser view = PDF output** with zero CSS divergence.
 
-### 2. Playwright Script (pixel-perfect, recommended)
-`export_pdf.py` uses headless Chromium to screenshot each slide at 1920×1080 and combines them into a PDF. Output is identical to what you see in the browser — no CSS rendering gaps.
+### Why viewer-based (not standalone slides)
+
+Individual `slide-N.html` files have their own `<style>` block for standalone viewing (centering, scaling). The viewer applies a different CSS cascade (viewer inline CSS + styles.css). Exporting standalone slides produces subtly different rendering. By exporting through the viewer, the CSS cascade is identical — what you see is what you get.
+
+### Usage
 
 ```bash
 # Requires: pip install playwright Pillow && playwright install chromium
@@ -386,12 +425,17 @@ python3 export_pdf.py --port 8731        # Custom port (default: auto-find)
 python3 export_pdf.py --no-server        # Don't auto-start server (expects one running)
 ```
 
-**No CSS restrictions.** Unlike the old html2canvas approach, Playwright uses real Chromium rendering. Use any CSS freely: `backdrop-filter`, `radial-gradient()`, CSS variables, `mix-blend-mode`, complex `clip-path`, etc.
+### Browser Print (fallback only)
+
+The viewer's `P` key triggers `window.print()`. This is a quick fallback but **not recommended** — browser print engines can break flexbox centering and produce inconsistent results. Always use `export_pdf.py` for the final PDF.
+
+**No CSS restrictions.** Playwright uses real Chromium rendering. Use any CSS freely: `backdrop-filter`, `radial-gradient()`, CSS variables, `mix-blend-mode`, complex `clip-path`, etc.
 
 ## Common Mistakes
 
 | Mistake | Fix |
 |---------|-----|
+| **Card boxes too tall / empty space inside cards** | **NEVER use `flex: 1` on card containers in column layouts. NEVER use `grid-template-rows: 1fr` for card grids. Use `auto` rows and content-sized containers. Cards must fit their content, not stretch to fill space.** |
 | Skipping plan.md and going straight to slides | Phase 1 is mandatory. Always write plan.md and get approval first. |
 | Topic labels as titles ("Market Analysis") | Write action titles: complete sentences stating a conclusion |
 | **Empty/sparse slides (THE #1 MISTAKE)** | **Every slide must fill 80%+ of the canvas. Add body text under title, 4+ data elements in primary area, and a supporting section (callout bar, comparison row, impact items) at the bottom. If a slide has a title, one stat, and whitespace — it is a draft, not a slide.** |
