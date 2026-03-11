@@ -57,6 +57,12 @@
       "source": "./plugins/cold-outreach-system",
       "description": "Cold outreach system with ICP targeting, personalized email sequences, LinkedIn outreach, and optional Gmail MCP integration for automated sending",
       "version": "1.0.0"
+    },
+    {
+      "name": "canva-skill",
+      "source": "./plugins/canva-skill",
+      "description": "Full-stack Canva skill: MCP setup, Connect API reference, OAuth, design workflows, batch operations, and troubleshooting",
+      "version": "1.0.0"
     }
   ]
 }

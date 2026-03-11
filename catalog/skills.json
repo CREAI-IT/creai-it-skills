@@ -76,6 +76,14 @@
       "tags": ["cold-email", "outreach", "sales", "outbound", "lead-generation", "linkedin", "gmail", "personalization"],
       "version": "1.0.0",
       "install_command": "/plugin install cold-outreach-system@creai-it-skills"
+    },
+    {
+      "name": "canva-skill",
+      "category": "Content & Visual",
+      "description": "Full-stack Canva skill: MCP setup (AI Connector + Dev MCP), Connect API reference, OAuth 2.0 + PKCE authentication, design workflows, batch operations, and troubleshooting for programmatic Canva integration",
+      "tags": ["canva", "design", "mcp", "api", "oauth", "export", "brand-template", "batch", "automation"],
+      "version": "1.0.0",
+      "install_command": "/plugin install canva-skill@creai-it-skills"
     }
   ]
 }
