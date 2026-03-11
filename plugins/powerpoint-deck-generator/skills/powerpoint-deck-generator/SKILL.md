@@ -98,7 +98,7 @@ Copy from `assets/base-styles.css`, customize: `--accent`/`--bg`/`--text` CSS va
 
 #### 4c: Create slide files
 
-**`slide-N.html`** — Based on `assets/slide-template.html`. Replace `{{SLIDE_TITLE}}`, `{{DECK_TITLE}}`, `{{SLIDE_SPECIFIC_STYLES}}`, `{{SLIDE_CONTENT}}`. Follow plan.md exactly. Link to `styles.css`. Standalone-viewable.
+**`slide-N.html`** — Based on `assets/slide-template.html`. Replace `{{SLIDE_TITLE}}`, `{{DECK_TITLE}}`, `{{SLIDE_SPECIFIC_STYLES}}`, `{{SLIDE_CONTENT}}`, `{{SPEAKER_NOTES}}`. Follow plan.md exactly. Link to `styles.css`. Standalone-viewable. Add speaker notes via HTML comment before closing `</body>`: `<!-- notes: Talking points for this slide -->`.
 
 **Per-slide density check**: (1) body text below title, (2) 4+ data elements, (3) supporting section at bottom. Missing any → add content before proceeding.
 
@@ -132,7 +132,7 @@ Auto-starts its own server. Exports through the viewer for pixel-perfect CSS fid
 ```
 deck-name/
 ├── plan.md          # Single source of truth
-├── index.html       # Viewer (arrows, fullscreen, PDF)
+├── index.html       # Viewer (arrows, fullscreen, PDF, grid overview, presenter mode)
 ├── export_pdf.py    # Playwright PDF export
 ├── styles.css       # Deck theme
 ├── slide-1.html     # Individual slides

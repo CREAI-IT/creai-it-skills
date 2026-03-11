@@ -132,6 +132,76 @@
             margin: 0 2px;
         }
 
+        /* === Slide Overview Grid === */
+        .grid-overlay {
+            position: fixed; inset: 0;
+            background: rgba(5, 5, 10, 0.95);
+            z-index: 2000;
+            display: none;
+            overflow-y: auto;
+            padding: 40px;
+        }
+        .grid-overlay.active { display: block; }
+        .grid-overlay .grid-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 32px;
+        }
+        .grid-overlay .grid-title {
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+            letter-spacing: 0.08em;
+            font-family: system-ui, sans-serif;
+        }
+        .grid-overlay .grid-close {
+            background: none; border: 1px solid rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.5);
+            padding: 6px 14px; border-radius: 6px;
+            cursor: pointer; font-size: 12px;
+            font-family: system-ui, sans-serif;
+            transition: all 0.2s;
+        }
+        .grid-overlay .grid-close:hover {
+            color: #fff; border-color: rgba(255,255,255,0.3);
+        }
+        .grid-wrap {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        .grid-thumb {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+            background: #111;
+        }
+        .grid-thumb:hover {
+            border-color: var(--accent, #3b82f6);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+        .grid-thumb.current {
+            border-color: var(--accent, #3b82f6);
+        }
+        .grid-thumb-inner {
+            width: 1920px; height: 1080px;
+            transform-origin: 0 0;
+            pointer-events: none;
+            position: absolute; top: 0; left: 0;
+        }
+        .grid-thumb-label {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.85));
+            padding: 20px 12px 8px;
+            color: rgba(255,255,255,0.6);
+            font-size: 12px;
+            font-family: system-ui, sans-serif;
+            font-variant-numeric: tabular-nums;
+        }
+
         /* === Print / PDF Export ===
          * Uses the browser's native rendering engine via window.print().
          * Each slide becomes a separate page at 1920x1080.
@@ -181,7 +251,7 @@
                 page-break-after: auto;
                 break-after: auto;
             }
-            .controls, .progress, .hints, .loading-msg {
+            .controls, .progress, .hints, .loading-msg, .grid-overlay {
                 display: none !important;
             }
 
@@ -200,6 +270,15 @@
 </head>
 <body>
     <div class="loading-msg" id="loadingMsg">LOADING SLIDES...</div>
+
+    <!-- Slide Overview Grid -->
+    <div class="grid-overlay" id="gridOverlay">
+        <div class="grid-header">
+            <span class="grid-title">SLIDE OVERVIEW</span>
+            <button class="grid-close" onclick="toggleGrid()">Close <kbd>G</kbd></button>
+        </div>
+        <div class="grid-wrap" id="gridWrap"></div>
+    </div>
 
     <div class="viewer">
         <div class="progress" id="progress"></div>
@@ -225,6 +304,13 @@
             <button id="pdfBtn" onclick="exportPDF()" aria-label="Export PDF" title="Export PDF (P)">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
             </button>
+            <span class="divider"></span>
+            <button onclick="toggleGrid()" aria-label="Slide Overview" title="Slide Overview (G)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            </button>
+            <button onclick="openPresenter()" aria-label="Presenter Mode" title="Presenter Mode (S)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            </button>
         </div>
 
         <div class="hints" id="hints">
@@ -233,6 +319,10 @@
             <kbd>F</kbd> fullscreen
             &nbsp;&middot;&nbsp;
             <kbd>P</kbd> export PDF
+            &nbsp;&middot;&nbsp;
+            <kbd>G</kbd> overview
+            &nbsp;&middot;&nbsp;
+            <kbd>S</kbd> presenter
         </div>
     </div>
 
@@ -247,8 +337,24 @@
         let slides = [];
         let current = 0;
         let total = SLIDE_FILES.length;
+        let slideNotes = [];       // Speaker notes per slide
+        let slideRawHTML = [];     // Raw HTML per slide (for presenter cloning)
+        let presenterWin = null;   // Reference to presenter window
 
         document.getElementById('total').textContent = total;
+
+        /* === Extract speaker notes from HTML ===
+         * Supports: <!-- notes: Your notes here -->
+         * Also supports multi-line:
+         *   <!-- notes:
+         *   Line 1
+         *   Line 2
+         *   -->
+         */
+        function extractNotes(html) {
+            const match = html.match(/<!--\s*notes:\s*([\s\S]*?)\s*-->/i);
+            return match ? match[1].trim() : '';
+        }
 
         async function loadSlides() {
             const results = await Promise.all(
@@ -256,20 +362,17 @@
             );
 
             results.forEach((html, idx) => {
+                slideRawHTML.push(html);
+                slideNotes.push(extractNotes(html));
+
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
                 const sourceSlide = doc.querySelector('.slide');
 
                 if (sourceSlide) {
-                    /* Extract all <style> tags from the slide's <head> and inject them
-                       into the viewer's <head>. This ensures slide-specific CSS (layouts,
-                       typography, card styles, etc.) is preserved when slides are loaded
-                       dynamically into the viewer. Without this, only the .slide div's
-                       innerHTML is extracted and all head styles are lost. */
                     const slideId = 'slide-injected-' + idx;
                     const styleEls = doc.querySelectorAll('head style');
                     styleEls.forEach((styleEl) => {
-                        // Skip the boilerplate reset/scaling style block
                         if (styleEl.textContent.includes('transform-origin: 0 0')) return;
                         const injected = document.createElement('style');
                         injected.setAttribute('data-slide', slideId);
@@ -316,6 +419,7 @@
             document.getElementById('current').textContent = current + 1;
             document.getElementById('progress').style.width =
                 ((current + 1) / total * 100) + '%';
+            syncPresenter();
         }
 
         function nextSlide() { showSlide(current + 1); }
@@ -329,38 +433,308 @@
             }
         }
 
-        /* === PDF Export (browser print) ===
-         * Uses window.print() with @media print CSS for native rendering.
-         * Before printing, scans all elements for backdrop-filter usage and
-         * replaces their semi-transparent backgrounds with solid opaque ones,
-         * because Chrome's print engine hides backdrop-filter elements entirely.
-         * For pixel-perfect export: python3 export_pdf.py
-         */
+        /* === PDF Export === */
         function exportPDF() {
-            const fixed = [];
-            container.querySelectorAll('*').forEach(el => {
-                const cs = getComputedStyle(el);
-                if (cs.backdropFilter && cs.backdropFilter !== 'none') {
-                    const bg = cs.backgroundColor;
-                    // Semi-transparent backgrounds become invisible without blur
-                    // Replace with a solid dark surface color
-                    if (bg.startsWith('rgba') && !bg.endsWith(', 1)')) {
-                        fixed.push({ el, origBg: el.style.backgroundColor });
-                        el.style.backgroundColor = '#141420';
+            fetch('deck-export.pdf', { method: 'HEAD' })
+                .then(r => {
+                    if (r.ok) {
+                        const a = document.createElement('a');
+                        a.href = 'deck-export.pdf';
+                        a.download = 'deck-export.pdf';
+                        a.click();
+                    } else {
+                        window.print();
                     }
+                })
+                .catch(() => window.print());
+        }
+
+        /* === Slide Overview Grid === */
+        function toggleGrid() {
+            const overlay = document.getElementById('gridOverlay');
+            const isActive = overlay.classList.toggle('active');
+            if (isActive) buildGrid();
+        }
+
+        function buildGrid() {
+            const wrap = document.getElementById('gridWrap');
+            wrap.innerHTML = '';
+            slides.forEach((slide, idx) => {
+                const thumb = document.createElement('div');
+                thumb.className = 'grid-thumb' + (idx === current ? ' current' : '');
+                thumb.onclick = () => { showSlide(idx); toggleGrid(); };
+
+                const inner = document.createElement('div');
+                inner.className = 'grid-thumb-inner';
+                inner.innerHTML = slide.innerHTML;
+                if (slide.getAttribute('style')) {
+                    inner.setAttribute('style', slide.getAttribute('style'));
                 }
-            });
-            window.print();
-            // Restore original backgrounds after print dialog closes
-            requestAnimationFrame(() => {
-                fixed.forEach(({ el, origBg }) => {
-                    el.style.backgroundColor = origBg;
+                slide.classList.forEach(cls => {
+                    if (cls !== 'slide' && cls !== 'active') inner.classList.add(cls);
+                });
+
+                thumb.appendChild(inner);
+
+                const label = document.createElement('div');
+                label.className = 'grid-thumb-label';
+                label.textContent = 'Slide ' + (idx + 1);
+                thumb.appendChild(label);
+
+                wrap.appendChild(thumb);
+
+                // Scale thumbnail to fit its container
+                requestAnimationFrame(() => {
+                    const rect = thumb.getBoundingClientRect();
+                    const s = rect.width / 1920;
+                    inner.style.transform = `scale(${s})`;
                 });
             });
         }
 
+        /* === Presenter Mode ===
+         * Opens a new window with:
+         * - Current slide (large)
+         * - Next slide preview (smaller)
+         * - Speaker notes panel
+         * - Elapsed timer
+         * Navigation in either window stays in sync.
+         */
+        function openPresenter() {
+            if (presenterWin && !presenterWin.closed) {
+                presenterWin.focus();
+                return;
+            }
+
+            // Gather all injected styles from the main viewer
+            const allStyles = Array.from(document.querySelectorAll('style[data-slide], head style'))
+                .map(s => s.outerHTML).join('\n');
+
+            presenterWin = window.open('', 'presenter', 'width=1200,height=800');
+            if (!presenterWin) { alert('Please allow popups for presenter mode.'); return; }
+
+            presenterWin.document.write(`<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<title>Presenter View</title>
+${allStyles}
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; background: #111; color: #ddd;
+  font-family: system-ui, -apple-system, sans-serif; overflow: hidden; }
+
+.presenter-layout {
+  display: grid; width: 100%; height: 100%;
+  grid-template-columns: 1fr 340px;
+  grid-template-rows: 1fr auto;
+}
+
+.current-slide-area {
+  position: relative; overflow: hidden;
+  background: #0a0a0a; border-right: 1px solid #222;
+}
+.current-slide-wrap {
+  width: 1920px; height: 1080px;
+  transform-origin: 0 0; position: absolute;
+  top: 50%; left: 50%;
+}
+.current-slide-wrap > .slide {
+  width: 1920px; height: 1080px; position: absolute; top: 0; left: 0;
+}
+
+.sidebar {
+  display: flex; flex-direction: column;
+  border-left: 1px solid #222;
+}
+
+.next-preview {
+  position: relative; overflow: hidden;
+  background: #0d0d0d; height: 200px;
+  border-bottom: 1px solid #222;
+  flex-shrink: 0;
+}
+.next-label {
+  position: absolute; top: 8px; left: 12px;
+  font-size: 10px; color: rgba(255,255,255,0.3);
+  letter-spacing: 0.1em; text-transform: uppercase; z-index: 1;
+}
+.next-slide-wrap {
+  width: 1920px; height: 1080px;
+  transform-origin: 0 0; position: absolute;
+  top: 50%; left: 50%;
+}
+.next-slide-wrap > .slide {
+  width: 1920px; height: 1080px; position: absolute; top: 0; left: 0;
+}
+
+.notes-panel {
+  flex: 1; overflow-y: auto; padding: 20px;
+  background: #1a1a1a;
+}
+.notes-header {
+  font-size: 10px; color: rgba(255,255,255,0.3);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.notes-content {
+  font-size: 16px; line-height: 1.6; color: rgba(255,255,255,0.8);
+  white-space: pre-wrap;
+}
+.notes-empty {
+  color: rgba(255,255,255,0.2); font-style: italic; font-size: 14px;
+}
+
+.presenter-bar {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 20px; background: #0a0a0a;
+  border-top: 1px solid #222;
+}
+.presenter-bar .counter {
+  color: rgba(255,255,255,0.5); font-size: 14px; font-variant-numeric: tabular-nums;
+}
+.presenter-bar .timer {
+  font-size: 28px; font-weight: 600; color: rgba(255,255,255,0.7);
+  font-variant-numeric: tabular-nums; letter-spacing: 0.02em;
+}
+.presenter-bar .controls { display: flex; gap: 8px; }
+.presenter-bar button {
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.6); padding: 6px 14px; border-radius: 6px;
+  cursor: pointer; font-size: 12px; font-family: inherit;
+  transition: all 0.15s;
+}
+.presenter-bar button:hover {
+  background: rgba(255,255,255,0.15); color: #fff;
+}
+</style>
+</head><body>
+<div class="presenter-layout">
+  <div class="current-slide-area">
+    <div class="current-slide-wrap" id="pCurrentWrap"></div>
+  </div>
+  <div class="sidebar">
+    <div class="next-preview">
+      <span class="next-label">NEXT</span>
+      <div class="next-slide-wrap" id="pNextWrap"></div>
+    </div>
+    <div class="notes-panel">
+      <div class="notes-header">SPEAKER NOTES</div>
+      <div class="notes-content" id="pNotes"></div>
+    </div>
+  </div>
+  <div class="presenter-bar">
+    <span class="counter"><span id="pCurrent">1</span> / <span id="pTotal">1</span></span>
+    <span class="timer" id="pTimer">00:00</span>
+    <span class="controls">
+      <button onclick="window.opener.prevSlide()">&#9664; Prev</button>
+      <button onclick="window.opener.nextSlide()">Next &#9654;</button>
+      <button id="pTimerBtn" onclick="toggleTimer()">Reset Timer</button>
+    </span>
+  </div>
+</div>
+<script>
+let timerStart = Date.now();
+let timerInterval = setInterval(updateTimer, 1000);
+function updateTimer() {
+  const elapsed = Math.floor((Date.now() - timerStart) / 1000);
+  const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+  const s = String(elapsed % 60).padStart(2, '0');
+  document.getElementById('pTimer').textContent = m + ':' + s;
+}
+function toggleTimer() { timerStart = Date.now(); }
+
+function scalePresenter() {
+  const area = document.querySelector('.current-slide-area');
+  if (!area) return;
+  const w = area.clientWidth, h = area.clientHeight;
+  const sc = Math.min(w / 1920, h / 1080) * 0.95;
+  const sw = 1920 * sc, sh = 1080 * sc;
+  const wrap = document.getElementById('pCurrentWrap');
+  wrap.style.transform = 'translate(' + (-sw/2) + 'px,' + (-sh/2) + 'px) scale(' + sc + ')';
+
+  const np = document.querySelector('.next-preview');
+  if (!np) return;
+  const nw = np.clientWidth, nh = np.clientHeight;
+  const ns = Math.min(nw / 1920, nh / 1080) * 0.9;
+  const nsw = 1920 * ns, nsh = 1080 * ns;
+  const nwrap = document.getElementById('pNextWrap');
+  nwrap.style.transform = 'translate(' + (-nsw/2) + 'px,' + (-nsh/2) + 'px) scale(' + ns + ')';
+}
+window.addEventListener('resize', scalePresenter);
+setTimeout(scalePresenter, 100);
+
+document.addEventListener('keydown', (e) => {
+  switch(e.key) {
+    case 'ArrowRight': case ' ':
+      e.preventDefault(); window.opener.nextSlide(); break;
+    case 'ArrowLeft':
+      e.preventDefault(); window.opener.prevSlide(); break;
+  }
+});
+<\/script>
+</body></html>`);
+            presenterWin.document.close();
+            setTimeout(() => syncPresenter(), 200);
+        }
+
+        function syncPresenter() {
+            if (!presenterWin || presenterWin.closed) return;
+            const doc = presenterWin.document;
+
+            // Update current slide
+            const curWrap = doc.getElementById('pCurrentWrap');
+            if (curWrap && slides[current]) {
+                curWrap.innerHTML = '';
+                const clone = slides[current].cloneNode(true);
+                clone.classList.add('slide');
+                clone.style.opacity = '1';
+                clone.style.pointerEvents = 'none';
+                curWrap.appendChild(clone);
+            }
+
+            // Update next slide preview
+            const nextIdx = (current + 1) % total;
+            const nextWrap = doc.getElementById('pNextWrap');
+            if (nextWrap && slides[nextIdx]) {
+                nextWrap.innerHTML = '';
+                const clone = slides[nextIdx].cloneNode(true);
+                clone.classList.add('slide');
+                clone.style.opacity = '1';
+                clone.style.pointerEvents = 'none';
+                nextWrap.appendChild(clone);
+            }
+
+            // Update notes
+            const notesEl = doc.getElementById('pNotes');
+            if (notesEl) {
+                const note = slideNotes[current] || '';
+                notesEl.innerHTML = note
+                    ? note.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                    : '<span class="notes-empty">No speaker notes for this slide.</span>';
+            }
+
+            // Update counter
+            const pCur = doc.getElementById('pCurrent');
+            const pTot = doc.getElementById('pTotal');
+            if (pCur) pCur.textContent = current + 1;
+            if (pTot) pTot.textContent = total;
+
+            // Re-scale
+            if (presenterWin.scalePresenter) presenterWin.scalePresenter();
+            else setTimeout(() => { try { presenterWin.scalePresenter(); } catch(e) {} }, 100);
+        }
+
         /* === Keyboard Controls === */
         document.addEventListener('keydown', (e) => {
+            // When grid is open, Escape closes it
+            const gridOpen = document.getElementById('gridOverlay').classList.contains('active');
+            if (gridOpen) {
+                if (e.key === 'Escape' || e.key === 'g' || e.key === 'G') {
+                    e.preventDefault(); toggleGrid();
+                }
+                return; // block other shortcuts while grid is open
+            }
+
             switch(e.key) {
                 case 'ArrowRight': case ' ':
                     e.preventDefault(); nextSlide(); break;
@@ -374,6 +748,10 @@
                     if (!e.metaKey && !e.ctrlKey) toggleFullscreen(); break;
                 case 'p': case 'P':
                     if (!e.metaKey && !e.ctrlKey) { e.preventDefault(); exportPDF(); } break;
+                case 'g': case 'G':
+                    if (!e.metaKey && !e.ctrlKey) { e.preventDefault(); toggleGrid(); } break;
+                case 's': case 'S':
+                    if (!e.metaKey && !e.ctrlKey) { e.preventDefault(); openPresenter(); } break;
                 case 'Escape':
                     if (document.fullscreenElement) document.exitFullscreen(); break;
             }
@@ -400,10 +778,10 @@
         window.addEventListener('resize', scaleSlides);
         scaleSlides();
 
-        /* Auto-hide hints after 3 seconds */
+        /* Auto-hide hints after 4 seconds */
         setTimeout(() => {
             document.getElementById('hints').classList.add('hidden');
-        }, 3000);
+        }, 4000);
     </script>
 </body>
 </html>
