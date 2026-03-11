@@ -35,7 +35,7 @@
 
 ## Font Size Hierarchy (1920×1080 canvas)
 
-> **Mandatory size ranges are also defined in `SKILL.md` → Font Size Hierarchy table.** This module provides rationale and self-check techniques.
+> The compact size table is also in `SKILL.md` → Quick Reference. This module provides the full rationale, self-check techniques, and typography techniques.
 
 **The viewer test**: Imagine the slide projected in a meeting room, or viewed on a laptop at arm's length. Every text element must be instantly readable without effort. If you have to wonder "is this readable?" — it isn't. Go larger.
 

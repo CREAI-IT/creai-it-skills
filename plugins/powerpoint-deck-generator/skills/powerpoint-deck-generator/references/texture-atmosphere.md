@@ -4,12 +4,6 @@
 
 ---
 
-## Why Texture Matters
-
-The difference between a flat digital slide and one that feels "designed" is atmosphere. Texture creates the perception of craft, depth, and intentionality — even when the viewer can't consciously identify what's different.
-
----
-
 ## CSS-Only Texture Techniques
 
 ### Subtle Grid Pattern

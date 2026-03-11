@@ -29,76 +29,32 @@ The #1 tell of an AI-generated slide is everything centered on a flat background
 
 ## Body Layout Patterns
 
-### Pattern 1: Full-Slide Chart
-- Action title (1–2 lines)
-- Chart/visualization occupies 70–80% of slide area
-- Optional callout arrow/box highlighting the key data point
-- Source citation at bottom
-- **Best for**: data-driven insights where the chart IS the evidence
-
-### Pattern 2: Split (Text + Visual)
-- Action title at top
-- Text in one column (40% width), visualization in other column (60% width)
-- Thin divider line between columns
-- **Best for**: when narrative context is needed alongside data
-
-### Pattern 3: Structured Text
-- Action title at top
-- Bold lead sentences state key claims
-- Indented or adjacent supporting evidence beneath each claim
-- Skimming the bold text alone gives the complete argument
-- **Best for**: qualitative analysis, recommendations, interview findings
-
-### Pattern 4: Metric Cards
-- Action title at top
-- 2–4 key metrics in large type (hero numbers)
-- Supporting context in smaller text below each metric
-- Varied card sizes (one large + two small > three same-size)
-- **Best for**: impact slides, proof points, KPIs
-
-### Pattern 5: Process Flow
-- Action title communicates the outcome, not the process
-- 3–5 steps maximum with simple connectors
-- Clear directional flow (horizontal or vertical)
-- Concise labels only
-- **Best for**: implementation roadmaps, timelines
+| Pattern | Structure | Best for |
+|---------|-----------|----------|
+| **Full-slide chart** | Chart occupies 70–80% of area, optional callout on key data point | Data-driven insights where the chart IS the evidence |
+| **Split (text + visual)** | Text column (40%) + visualization column (60%), thin divider | Narrative context alongside data |
+| **Structured text** | Bold lead sentences + indented evidence; skimming bold = full argument | Qualitative analysis, recommendations |
+| **Metric cards** | 2–4 hero numbers with supporting context; vary card sizes | Impact slides, proof points, KPIs |
+| **Process flow** | 3–5 steps max, horizontal/vertical, action title states outcome not process | Roadmaps, timelines |
 
 ---
 
 ## Content Density
 
-### The Density Principle
+**Visually full + cognitively simple.** Canvas 80%+ filled with structured visual elements (not paragraphs), but scannable in 5–10 seconds.
 
-A slide must be **visually full but cognitively simple**. These are not contradictory:
-- **Visually full** = the 1920×1080 canvas has content across 80%+ of its vertical space. No large empty zones.
-- **Cognitively simple** = one message, scannable in 5–10 seconds, explainable in 60 seconds.
+### Three Zones (every non-title slide)
 
-The way to achieve both: use **structured visual elements** (stat cards, metric grids, callout bars, comparison rows) instead of dense paragraphs.
+1. **Top** — Overline + action title + body text (~200px)
+2. **Middle** — Primary content: cards, columns, grids, hero numbers (~550–600px)
+3. **Bottom** — Supporting element: callout bar, impact row, comparison strip (~150–200px)
 
-### Three Zones
+If any zone is empty, the slide looks sparse. After writing a slide, mentally remove title and source — does the remaining area look like a designed layout or scattered elements on whitespace?
 
-Every non-title slide needs three zones filled:
-1. **Top zone** — Overline + action title + body text (~200px)
-2. **Middle zone** — Primary content: cards, columns, grids, hero numbers (~550–600px)
-3. **Bottom zone** — Supporting element: callout bar, impact row, comparison strip (~150–200px)
+### Padding
 
-If any zone is empty, the slide will look sparse.
-
-### Speed Tests
-
-- **5–10 second test**: Can a viewer understand the slide's message in one glance?
-- **60-second test**: Can the slide be presented verbally in under a minute?
-- If a test fails, the slide is too dense with *text* — restructure into visual elements, or split the slide.
-
-### Anti-Sparse Test
-
-After writing a slide, mentally remove the title and source. Does the remaining area look like a designed information layout — or scattered elements on empty space? If the latter, add: body text, more data points, a bottom section, or context within cards.
-
-### Whitespace & Padding
-
-- **Content slides**: 80–120px padding minimum
-- **Title slides**: 140–200px padding for drama
-- **Canvas fill rule**: Content must occupy 80%+ of vertical space. Whitespace exists *between* elements for breathing room — not as large empty zones.
+- Content slides: 80–120px | Title slides: 140–200px
+- Whitespace goes *between* elements, not as large empty zones
 
 ---
 

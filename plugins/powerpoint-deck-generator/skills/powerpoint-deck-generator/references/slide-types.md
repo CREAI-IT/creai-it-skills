@@ -41,26 +41,6 @@
 - Clear visual separation: thick divider, different backgrounds, or distinct card styles
 - **Canvas fill**: Two rich columns with 3+ items each + transformation row at bottom
 
-### Comparison Layout Patterns
-
-```
-┌─────────────────────────────────────────────┐
-│ ACTION TITLE                                 │
-│                                              │
-│ ┌──────────────┐  ┌──────────────────────┐  │
-│ │  ● Problem   │  │  ● Solution          │  │
-│ │  (red tint)  │  │  (accent tint)       │  │
-│ │  • item 1    │  │  • item 1            │  │
-│ │  • item 2    │  │  • item 2            │  │
-│ │  • item 3    │  │  • item 3            │  │
-│ └──────────────┘  └──────────────────────┘  │
-│                                              │
-│ ┌────────────────────────────────────────┐   │
-│ │ From X → To Y (transformation row)    │   │
-│ └────────────────────────────────────────┘   │
-└─────────────────────────────────────────────┘
-```
-
 ---
 
 ## Process / Timeline Slide
@@ -71,27 +51,6 @@
 - 3–5 steps maximum
 - Don't force uniform card sizes — highlighted steps can be wider
 - **Canvas fill**: Step nodes + detail cards below each + callout bar at bottom
-
-### Process Layout Pattern
-
-```
-┌─────────────────────────────────────────────────┐
-│ ACTION TITLE                                     │
-│                                                  │
-│  ①──────②──────③──────④                          │
-│  Step 1  Step 2  Step 3  Step 4 (highlighted)    │
-│  Wk 1-2  Wk 3-6  Wk 7-9  Wk 10-12              │
-│ ┌──────┐┌──────┐┌──────┐┌────────────┐          │
-│ │detail││detail││detail││ HIGHLIGHT  │          │
-│ │card  ││card  ││card  ││ detail     │          │
-│ │      ││      ││      ││ card       │          │
-│ └──────┘└──────┘└──────┘└────────────┘          │
-│                                                  │
-│ ┌────────────────────────────────────────────┐   │
-│ │ Summary callout bar                        │   │
-│ └────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────┘
-```
 
 ---
 
@@ -121,16 +80,3 @@
 - Key metrics or outcomes as a final proof point
 - **Canvas fill**: CTA + supporting outcomes/metrics + contact details
 
----
-
-## Density Targets Summary
-
-| Slide Type | Primary Zone | Supporting Element |
-|------------|-------------|-------------------|
-| **Hero metric** | Hero number + label + 3-4 stat cards | Callout bar or context row |
-| **Problem/stat** | Two-column: hero left, 4+ stat cards right | Bottom impact row |
-| **Solution** | Solution card(s) with sub-sections | Before/after or tagline comparison |
-| **Bridge** | 3×2 stat grid or two rich columns | Callout bar with key message |
-| **Overview** | 3 rich cards (number + heading + body + stat) | Summary callout |
-| **Comparison** | Two-column comparison layout | Transformation row (From → To) |
-| **Closing** | Layer cards with descriptions + outcomes | CTA or closing message |

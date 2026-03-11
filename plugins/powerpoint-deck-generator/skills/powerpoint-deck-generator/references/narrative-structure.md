@@ -25,52 +25,20 @@ Every slide has a **complete-sentence action title** at the top that states the 
 | Bad (Topic Label) | Good (Action Title) |
 |---|---|
 | "Market Analysis" | "Revenue declined 8% due to premium segment contraction" |
-| "Financial Performance" | "Revenue declined 12% in Q4, the steepest drop in five years" |
 | "The Problem" | "Every hour of vessel delay costs $150K+ in cascading losses" |
-| "Supply Chain Overview" | "Optimize supply chain processes to reduce costs by 20%" |
-| "Optimization Approach" | "4-layer cascading hierarchy synchronizes all port operations" |
 | "Industry Benchmarks" | "AI-optimized ports achieve 30–57% higher throughput than manual peers" |
 | "Our Solution" | "Software-only optimization delivers ROI in months, not decades" |
-| "Cost Breakdown" | "D&D charges waste $10B+ annually due to scheduling inefficiency" |
 | "Team Overview" | "Three domain experts with 40+ combined years in port logistics" |
 
-### If You Can't Write the Action Title
-
-If you struggle to write an action title for a slide, it means:
-- The slide content is unclear → clarify the insight first
-- The slide contains multiple messages → split into multiple slides
-- The slide is unnecessary → delete it
-
-The difficulty of writing the title is a diagnostic signal.
+If you can't write an action title, the slide's insight is unclear — clarify, split, or delete it.
 
 ---
 
 ## Three-Part Slide Structure
 
-Every content slide follows this exact structure:
+Every content slide: **Action title** (36–44px, left-aligned) → **Body/exhibit** (evidence proving the title) → **Source** (bottom).
 
-```
-┌─────────────────────────────────────────────────────────┐
-│ ACTION TITLE (36–44px, left-aligned)                    │
-│ Complete sentence stating the key insight                │
-│                                                         │
-│ Subheading (optional, 24–28px, muted)                   │
-│ Data source, context, or qualifying statement            │
-│                                                         │
-│ ┌─────────────────────────────────────────────────────┐ │
-│ │                                                     │ │
-│ │               BODY / EXHIBIT                        │ │
-│ │                                                     │ │
-│ │   The evidence that PROVES the action title:        │ │
-│ │   chart, data grid, structured text, or visual      │ │
-│ │                                                     │ │
-│ └─────────────────────────────────────────────────────┘ │
-│                                                         │
-│ Source: citation, year                    Slide number   │
-└─────────────────────────────────────────────────────────┘
-```
-
-**The fundamental rule:** Nothing in the action title that's not in the slide body. Nothing in the slide body that's irrelevant to the action title.
+**The fundamental rule:** Nothing in the title absent from the body. Nothing in the body irrelevant to the title.
 
 ---
 
